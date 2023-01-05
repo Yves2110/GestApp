@@ -65,9 +65,7 @@ class AuthController extends Controller
                     break;
             };
             Alert::success('Connexion établie', 'Bienvenue sur la plate-forme');
-        }
-        else return Redirect::back()->with('error', 'Email ou mot de passe incorrect!');
-
+        } else return Redirect::back()->with('error', 'Email ou mot de passe incorrect!');
     }
 
     /**
@@ -80,14 +78,24 @@ class AuthController extends Controller
     public function postRegistration(Request $request)
 
     {
-        $request->validate([
-            'name' => 'required',
+        request()->validate([
+            'firstname' => 'required',
+            'lastname' => 'required',
+            'birthday' => 'required',
+            'sub' => 'required',
             'email' => 'required|email|unique:users',
-            'password' => 'required|min:6',
+            'tel' => 'required|min:8 ',
         ]);
-        $data = $request->all();
-        $check = $this->create($data);
-        return redirect("dashboard")->withSuccess('Great! You have Successfully loggedin');
+        User::create([
+            'firstname' => $request->firstname,
+            'lastname' => $request->lastname,
+            'birthday' => $request->birthday,
+            'sub' => $request->sub,
+            'email' => $request->email,
+            'tel' => $request->tel,
+
+        ]);
+        return redirect("Home")->withSuccess('Enregistrement réussi!');
     }
 
     /**

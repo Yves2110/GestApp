@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/register', function () {
 //     return view('auth.register');
 // });
+Route::get('service', [HomeController::class, 'serviceajout'])->name('services');
 
 /*route pour Authentification */
 Route::post('guide',[GuideController::class, 'store'])->name('guide');

@@ -17,7 +17,7 @@
         </a>
         <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
-            <a href=" {{route ('registration') }} ">
+            <a href=" {{route ('register') }} ">
               <i class="bi bi-plus-circle"></i><span>Ajouter</span>
             </a>
           </li>
