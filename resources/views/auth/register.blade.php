@@ -37,7 +37,7 @@
 
         .wrapper {
             max-width: 800px;
-            margin: 50px 350px auto;
+            margin: 50px 25% auto;
             padding: 30px 45px;
             box-shadow: 5px 25px 35px #3535356b;
         }

@@ -1,6 +1,15 @@
 @extends('layouts.home')
 @section('content')
+<center>
+    @if (session()->has('message'))
+        <div class="alert alert-success">
+            {{ session()->get('message') }}
+        </div>
+    @endif
+</center>
     <div class="container d-flex">
+
+
         <div class="col-md-5 card m-5 ">
             <a href=" {{route ('register') }} " class="btn btn-info">
                 <i class="bi bi-plus-circle"></i>
@@ -19,7 +28,7 @@
             <div class="modal fade" id="verticalycentered" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
-                        <form action="{{ route('guide') }}" method="post" enctype="multipart/form-data">
+                        <form action="{{ route('ajoutservice') }}" method="post" enctype="multipart/form-data">
                             @csrf
                             <div class="modal-header">
                                 <h5 class="modal-title">Ajout d'un nouveau service</h5>
