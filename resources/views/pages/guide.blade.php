@@ -31,12 +31,17 @@
                                 <tr>
                                     <th scope="row"> {{ $guide->id }} </th>
                                     <td> {{ $guide->file }}</td>
-                                    <td class="badge bg-success"><h4>Guide</h4> </td>
+                                  <td> <button class="btn btn-lg btn-success ">
+                                        <a href="{{ asset ('docs/'.$guide->file) }}" class="text-white">Guide</a>
+                                   </button> </td>
+
+
                                     <td> {{ $guide->created_at }}</td>
                                     <td> {{ $guide->update_at }}</td>
+                                    <td> <a href="#" class="btn badge btn-info">Editer</a></td>
+                                    <td> <a href=" {{route ('delete.guide',$guide->id) }} " class="btn badge btn-danger">Supprimer</a></td>
                                 </tr>
-
-                        </tbody>
+                 </tbody>
                     </table>
                     <!-- End Table with stripped rows -->
 

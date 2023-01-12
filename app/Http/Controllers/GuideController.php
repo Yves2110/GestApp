@@ -3,26 +3,42 @@
 namespace App\Http\Controllers;
 
 use App\Models\guide;
+use App\Models\service;
 use Illuminate\Http\Request;
 
 class GuideController extends Controller
 {
     public function index()
     {
-        $guides=guide::all();
-        return view('pages.guide', ['guides' =>$guides]);
+        $guides = guide::all();
+        $services = service::all();
+        return view('pages.guide', compact('guides', 'services'));
     }
 
-   
+
     public function store(Request $request)
     {
-        // dd($request);
-        Request()->validate([
-            'file' => 'required'
-        ]);
-        guide::create([
-            'file' => $request->file
-        ]);
+        $request->validate(
+            [
+                'file' => 'required|mimes:pdf,xls,docs,|max:2048'
+            ]
+        );
+        $input = $request->all();
+        if ($docs = $request->file('file')) {
+            $destinationPath = 'docs/';
+            $guides = date('YmdHis') . "." . $docs->getClientOriginalExtension();
+            $docs->move($destinationPath, $guides);
+            $input['file'] = "$guides";
+        }
+
+        guide::create($input);
         return back()->with('message', 'Enregistrement effectué avec succès!');
+    }
+
+    public function destroy($id)
+    {
+        $guide=guide::find($id);
+        $guide->delete();
+        return back()->with('message', 'Suppression effectué avec succès!');
     }
 }

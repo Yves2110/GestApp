@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\service;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
@@ -33,7 +34,8 @@ class AuthController extends Controller
 
     public function registration()
     {
-        return view('auth.register');
+        $services=service::all();
+        return view('auth.register', compact('services'));
     }
     /**
      * Write code on Method

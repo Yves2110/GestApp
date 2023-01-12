@@ -30,8 +30,9 @@
 
 <body>
 
-    <x-sidebar />
+    <x-sidebar :services="$services" />
     <x-navbar />
+    {{-- @include('components.sidebar'); --}}
 
     <main id="main" class="main">
         @yield('content')

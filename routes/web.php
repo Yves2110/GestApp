@@ -33,7 +33,7 @@ Route::post('ajoutservice', [HomeController::class, 'servicestore'])->name('ajou
 
 /*route pour Authentification */
 Route::post('guide',[GuideController::class, 'store'])->name('guide');
-
+Route::get('delete/{id}', [GuideController::class, 'destroy'])->name('delete.guide');
 Route::get('Guide',[GuideController::class, 'index'])->name('Guide');
 
 Route::get('home', [HomeController::class, 'index'])->name('Home');

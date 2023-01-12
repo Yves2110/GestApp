@@ -15,7 +15,9 @@ class HomeController extends Controller
 
     public function serviceajout()
     {
-        return view('pages/serviceajout');
+
+        $services=service::all();
+        return view('pages/serviceajout',['services'=>$services] );
     }
 
     public function servicestore(Request $request)
