@@ -5,13 +5,15 @@ namespace App\Http\Controllers\Auth;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\role;
 use App\Models\service;
+use App\Notifications\Gestapp;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use RealRashid\SweetAlert\Facades\Alert;
-
+use Illuminate\Support\Str;
 class AuthController extends Controller
 
 {
@@ -35,7 +37,8 @@ class AuthController extends Controller
     public function registration()
     {
         $services=service::all();
-        return view('auth.register', compact('services'));
+        $roles=role::where('id', '!=' ,'1')->get();
+        return view('auth.register', compact('services','roles'));
     }
     /**
      * Write code on Method
@@ -80,24 +83,30 @@ class AuthController extends Controller
     public function postRegistration(Request $request)
 
     {
-        request()->validate([
-            'firstname' => 'required',
-            'lastname' => 'required',
-            'birthday' => 'required',
-            'sub' => 'required',
-            'email' => 'required|email|unique:users',
-            'tel' => 'required|min:8 ',
-        ]);
-        User::create([
+      request()->validate([
+        'firstname' => 'required|string',
+        'lastname' => 'required|string',
+        'email' => 'required|email|unique:users',
+        'birthday' => 'required',
+        'role_id' => 'required|string',
+        'sub' => 'required|string',
+        'tel' => 'required|string',
+      ]);
+
+        $password= substr(str_shuffle(Hash::make(Str::random(8))) , 0 , 15);
+
+        $user=User::create([
             'firstname' => $request->firstname,
             'lastname' => $request->lastname,
             'birthday' => $request->birthday,
+            'role_id' => $request->role_id,
             'sub' => $request->sub,
+            'password'=> Hash::make($password),
             'email' => $request->email,
             'tel' => $request->tel,
-
         ]);
-        return redirect("Home")->withSuccess('Enregistrement réussi!');
+        $user->notify(new Gestapp($user));
+        return back()->with('message', 'Enregistrement effectué avec succès!');
     }
 
     /**

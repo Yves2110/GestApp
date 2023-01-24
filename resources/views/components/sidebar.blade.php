@@ -30,7 +30,7 @@
                         </li>
 
                     @empty
-                        <span>Pas de Service</span>
+                        <span class="ms-5 fw-bold">Pas de Service</span>
                     @endforelse
 
                 </ul>

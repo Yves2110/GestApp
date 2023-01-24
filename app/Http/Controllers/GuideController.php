@@ -20,7 +20,7 @@ class GuideController extends Controller
     {
         $request->validate(
             [
-                'file' => 'required|mimes:pdf,xls,docs,|max:2048'
+                'file' => 'required|mimes:pdf,xlsx,docx,|max:5048'
             ]
         );
         $input = $request->all();

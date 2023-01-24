@@ -11,16 +11,23 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js">
     <link href=" {{ asset('assets/img/logo1.png') }} "rel="icon">
     <link href=" {{ asset('assets/img/logo1.png') }} "rel="apple-touch-icon">
-    <link rel="stylesheet" href=" {{asset('assets/css/register.css') }} ">
+    <link rel="stylesheet" href=" {{ asset('assets/css/register.css') }} ">
 </head>
 
 <body>
 
 
+    <center>
+        @if (session()->has('message'))
+        <div class="alert alert-success">
+            {{ session()->get('message') }}
+            </div>
+        @endif
+    </center>
     <div class="wrapper rounded bg-white">
 
         <div class="h3">Inscription</div>
-        <form action="{{ route('register.post') }}" method="post">
+        <form action=" {{route('enregistrement')}} " method="post">
             @csrf
             <div class="form">
                 <div class="row">
@@ -59,7 +66,7 @@
                         <select id="sub" id="sub" name="sub" required>
                             <option value="" selected hidden>Choix Option</option>
                             @foreach ($services as $service)
-                            <option value="{{ $service->id }}"> {{$service->service}} </option>
+                                <option value="{{ $service->id }}"> {{ $service->service }} </option>
                             @endforeach
 
                         </select>
@@ -91,6 +98,16 @@
                             <span class="text-danger">{{ $errors->first('tel') }}</span>
                         @endif
                     </div>
+
+                    <div class="col-md-6 mt-md-0 mt-3 role">
+                        <select id="sub" name="role_id" required>
+                            <option value="" selected hidden>Choix du Role</option>
+                            @foreach ($roles as $role )
+                                <option value="{{ $role->id }}"> {{ $role->label }} </option>
+                            @endforeach
+
+                        </select>
+                    </div>
                 </div>
 
                 <div class=" my-md-2 my-3">
@@ -99,7 +116,8 @@
                 <button type="submit">
                     <div class="btn btn-primary">Enregistrer</div>
                 </button>
-                <button type="button" class="btn btn-secondary" value="RETOUR" onclick="history.back();">Fermer</button>
+                <button type="button" class="btn btn-secondary" value="RETOUR"
+                    onclick="history.back();">Fermer</button>
             </div>
         </form>
     </div>

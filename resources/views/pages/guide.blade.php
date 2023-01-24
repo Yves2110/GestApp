@@ -21,7 +21,7 @@
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">Fichier</th>
-                                <th scope="col">Intutiler</th>
+                                {{-- <th scope="col">Intutiler</th> --}}
                                 <th scope="col">Date de mise en service</th>
                                 <th scope="col">Date de mise a jour</th>
                             </tr>
@@ -30,12 +30,10 @@
                             @forelse ($guides as $guide)
                                 <tr>
                                     <th scope="row"> {{ $guide->id }} </th>
-                                    <td> {{ $guide->file }}</td>
+                                    {{-- <td> {{ $guide->file }}</td> --}}
                                   <td> <button class="btn btn-lg btn-success ">
-                                        <a href="{{ asset ('docs/'.$guide->file) }}" class="text-white">Guide</a>
+                                        <a href="{{ asset ('docs/'.$guide->file) }}" class="text-white" target="_blank">Guide</a>
                                    </button> </td>
-
-
                                     <td> {{ $guide->created_at }}</td>
                                     <td> {{ $guide->update_at }}</td>
                                     <td> <a href="#" class="btn badge btn-info">Editer</a></td>

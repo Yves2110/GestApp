@@ -4,7 +4,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\GuideController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
-
+use App\Notifications\Gestapp;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -44,10 +44,10 @@ Route::post('post-login', [AuthController::class, 'postLogin'])->name('login.pos
 
 Route::get('registration', [AuthController::class, 'registration'])->name('register');
 
-Route::post('post-registration', [AuthController::class, 'postRegistration'])->name('register.post');
+// Route::post('post-registration', [AuthController::class, 'postRegistration'])->name('register.post');
 
 Route::get('logout', [AuthController::class, 'logout'])->name('logout');
-
+Route::post('enregistrement', [AuthController::class,'postRegistration' ])->name('enregistrement');
 /*middleware*/
 
 // Route::middleware(['auth', 'user-access:SuperAdmin'])->group(function () {
@@ -66,3 +66,6 @@ Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 // Route::middleware(['auth', 'user-access:services'])->group(function () {
 //     Route::get('/service/home', [HomeController::class, 'adminHome'])->name('service.home');
 // });
+
+// for mailable routes
+
