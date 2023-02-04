@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('guides', function (Blueprint $table) {
             $table->id();
-            $table->string('file');
+            $table->string('fichier');
             $table->timestamps();
         });
     }

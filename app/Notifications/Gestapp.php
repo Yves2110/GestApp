@@ -13,6 +13,7 @@ class Gestapp extends Notification implements ShouldQueue
 {
     use Queueable;
     public $user;
+
     /**
      * Create a new notification instance.
      *
@@ -45,7 +46,7 @@ class Gestapp extends Notification implements ShouldQueue
         return (new MailMessage)
             ->line("Message automatique suite à la creation de votre compte sur GestApp.")
             ->line('Votre identifiant :  '.$this->user->email)
-            ->line('Votre Mot de passe :  '.$this->user->password)
+            ->line('Votre Mot de passe :  ' .$this->user->password)
             ->action('Notification Action', url('www.Google.com'))
             ->line('Merci de bien vouloir allez vous connecter sur notre Plateforme GestApp!');
     }

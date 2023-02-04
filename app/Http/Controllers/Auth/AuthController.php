@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\role;
 use App\Models\service;
 use App\Notifications\Gestapp;
+use Attribute;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;

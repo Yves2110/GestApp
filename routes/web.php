@@ -16,18 +16,7 @@ use App\Notifications\Gestapp;
 |
 */
 
-// Route::get('/guide', function () {
-//     return view('pages.guide');
-// });
-// Route::get('/home', function () {
-//     return view('layouts.home');
-// });
-// Route::get('/login', function () {
-//     return view('auth.login');
-// });
-// Route::get('/register', function () {
-//     return view('auth.register');
-// });
+
 Route::get('service', [HomeController::class, 'serviceajout'])->name('services');
 Route::post('ajoutservice', [HomeController::class, 'servicestore'])->name('ajoutservice');
 
@@ -37,8 +26,9 @@ Route::get('delete/{id}', [GuideController::class, 'destroy'])->name('delete.gui
 Route::get('Guide',[GuideController::class, 'index'])->name('Guide');
 
 Route::get('home', [HomeController::class, 'index'])->name('Home');
+// Route::get('/',[AuthController::class, 'index'])->middleware('auth');
 
-Route::get('/', [AuthController::class, 'index']);
+// Route::get('/', [AuthController::class, 'index'])->middleware('auth');
 
 Route::post('post-login', [AuthController::class, 'postLogin'])->name('login.post');
 

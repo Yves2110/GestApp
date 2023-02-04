@@ -24,7 +24,7 @@
                     </li>
                     @forelse ($services as $service)
                         <li>
-                            <a href="components-accordion.html">
+                            <a href="#">
                                 <i class="bi bi-circle"></i><span>{{ $service->service }}</span>
                             </a>
                         </li>
