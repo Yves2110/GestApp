@@ -18,12 +18,11 @@ class SuperAdminSeeder extends Seeder
     {
         User::create([
             'role_id'=>1,
+            'service_id'=>1,
             'firstname'=>'KABORE',
             'lastname'=>'Ismael Yves',
             'email'=>'ismaelyveskabore@gmail.com',
-            'tel'=>'77634303',
-            'sub'=>'Developper',
-            'birthday'=>'21/10/1996',
+            'number'=>'77634303',
             'password'=>Hash::make('password'),
 
         ]);

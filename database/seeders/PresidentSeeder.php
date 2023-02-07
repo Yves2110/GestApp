@@ -18,12 +18,11 @@ class PresidentSeeder extends Seeder
     {
         User::create([
             'role_id'=>2,
+            'service_id'=>2,
             'firstname'=>'President',
             'lastname'=>'President',
             'email'=>'president@gmail.com',
-            'tel'=>'70000001',
-            'sub'=>'President',
-            'birthday'=>'',
+            'number'=>'70000001',
             'password'=>Hash::make('password'),
 
         ]);

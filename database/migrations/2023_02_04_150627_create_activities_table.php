@@ -16,6 +16,9 @@ return new class extends Migration
         Schema::create('activities', function (Blueprint $table) {
             $table->id();
             $table->foreignId('role_id')->constrained();
+            $table->foreignId('service_id')->constrained();
+            $table->foreignId('objective_id')->constrained();
+            $table->foreignId('under_objective_id')->constrained();
             $table->string('label');
             $table->string('indicator');
             $table->string('target');

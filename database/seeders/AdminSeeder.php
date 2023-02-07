@@ -18,12 +18,11 @@ class AdminSeeder extends Seeder
     {
         User::create([
             'role_id'=>3,
+            'service_id'=>3,
             'firstname'=>'DEPS',
             'lastname'=>'DEPS',
             'email'=>'deps@gmail.com',
-            'tel'=>'70000000',
-            'sub'=>'Administrator',
-            'birthday'=>'',
+            'number'=>'70000000',
             'password'=>Hash::make('password'),
 
         ]);

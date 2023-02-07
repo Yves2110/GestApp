@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Tdr extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'role_id',
+        'activity_id',
+        'fichier',
+    ];
+
+    
 }

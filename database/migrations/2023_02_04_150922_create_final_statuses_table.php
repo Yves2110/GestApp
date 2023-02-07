@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('activity_id')->constrained();
             $table->string('label');
-            $table->string('market-number');
+            $table->string('market_number');
             $table->timestamps();
         });
     }

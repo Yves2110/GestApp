@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class activity_variable extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'activity_id',
+        'number_of_participants',
+        'number_of_trainor',
+        'number_of_days',
+        'place',
+    ];
 }
