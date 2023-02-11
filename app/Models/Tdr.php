@@ -14,5 +14,8 @@ class Tdr extends Model
         'fichier',
     ];
 
-    
+    public function activity()
+    {
+        return $this->belongsTo(Activities::class);
+    }
 }

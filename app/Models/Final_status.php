@@ -10,9 +10,13 @@ class Final_status extends Model
     use HasFactory;
     protected $fillable = [
         'activity_id',
-        'number_of_participants',
-        'number_of_trainor',
-        'number_of_days',
-        'place',
+        'label',
+        'market_number',
+
     ];
+    
+    public function activity()
+    {
+        return $this->belongsTo(Activities::class);
+    }
 }

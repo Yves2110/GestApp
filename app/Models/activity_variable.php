@@ -15,4 +15,9 @@ class activity_variable extends Model
         'number_of_days',
         'place',
     ];
+
+    public function activity()
+    {
+        return $this->belongsTo(Activities::class);
+    }
 }

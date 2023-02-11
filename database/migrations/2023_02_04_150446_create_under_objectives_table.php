@@ -15,7 +15,6 @@ return new class extends Migration
     {
         Schema::create('under_objectives', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('role_id')->constrained();
             $table->foreignId('objective_id')->constrained();
             $table->string('label');
             $table->timestamps();

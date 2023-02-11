@@ -51,32 +51,19 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-6 mt-md-0 mt-3">
-                        <label>Date de naissance</label>
-                        <input type="date" class="form-control" id="birthday" name="birthday" required>
-
-                        @if ($errors->has('birthday'))
-                            <span class="text-danger">{{ $errors->first('birthday') }}</span>
-                        @endif
-
-                    </div>
 
                     <div class="col-md-6 mt-md-0 mt-3">
                         <label>Services</label>
-                        <select id="sub" id="sub" name="sub" required>
+                        <select id="sub" id="sub" name="service_id" required>
                             <option value="" selected hidden>Choix Option</option>
                             @foreach ($services as $service)
                                 <option value="{{ $service->id }}"> {{ $service->service }} </option>
                             @endforeach
-
                         </select>
-
-                        @if ($errors->has('sub'))
-                            <span class="text-danger">{{ $errors->first('sub') }}</span>
+                        @if ($errors->has('service_id'))
+                            <span class="text-danger">{{ $errors->first('service_id') }}</span>
                         @endif
-
                     </div>
-
                 </div>
 
                 <div class="row">
@@ -87,15 +74,14 @@
                         @if ($errors->has('email'))
                             <span class="text-danger">{{ $errors->first('email') }}</span>
                         @endif
-
                     </div>
 
                     <div class="col-md-6 mt-md-0 mt-3">
                         <label>Numéro</label>
-                        <input type="tel" class="form-control" id="tel" name="tel" required>
+                        <input type="number" class="form-control" id="number" name="number" required>
 
-                        @if ($errors->has('tel'))
-                            <span class="text-danger">{{ $errors->first('tel') }}</span>
+                        @if ($errors->has('number'))
+                            <span class="text-danger">{{ $errors->first('number') }}</span>
                         @endif
                     </div>
 
@@ -105,14 +91,12 @@
                             @foreach ($roles as $role )
                                 <option value="{{ $role->id }}"> {{ $role->label }} </option>
                             @endforeach
-
                         </select>
                     </div>
                 </div>
 
-                <div class=" my-md-2 my-3">
-
-                </div>
+                <div class=" my-md-2 my-3"></div>
+                
                 <button type="submit">
                     <div class="btn btn-primary">Enregistrer</div>
                 </button>

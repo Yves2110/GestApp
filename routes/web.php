@@ -1,8 +1,11 @@
 <?php
 
+use App\Http\Controllers\ActivitiesController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\GuideController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ObjectiveController;
+use App\Http\Controllers\ServiceController;
 use Illuminate\Support\Facades\Route;
 use App\Notifications\Gestapp;
 /*
@@ -26,9 +29,25 @@ Route::get('delete/{id}', [GuideController::class, 'destroy'])->name('delete.gui
 Route::get('Guide',[GuideController::class, 'index'])->name('Guide');
 
 Route::get('home', [HomeController::class, 'index'])->name('Home');
-// Route::get('/',[AuthController::class, 'index'])->middleware('auth');
 
-// Route::get('/', [AuthController::class, 'index'])->middleware('auth');
+ Route::get('/',[AuthController::class, 'index']);
+// route pour les activites
+Route::get('activites', [ActivitiesController::class, 'index'])->name('Activites');
+Route::post('ActivitiesStore', [ActivitiesController::class, 'ActivitiesStore'])->name('ActivitiesStore');
+
+
+// route pour les objectifs
+Route::get('objective', [ObjectiveController::class, 'index'])->name('Objective');
+Route::post('StoreObjective', [ObjectiveController::class, 'ObjectiveStore'])->name('ObjectiveStore');
+
+
+// route pour les sous objectif
+Route::get('under_objective', [ObjectiveController::class, 'under_index'])->name('Under_Objective');
+Route::post('StoreUnderObjective', [ObjectiveController::class, 'UnderObjectiveStore'])->name('UnderObjectiveStore');
+
+
+// Route::get('activites', [ServiceController::class, 'index']);
+// Route::get('objective', [ServiceController::class, 'text']); Route::get('under_objective', [ServiceController::class, 'texte']);
 
 Route::post('post-login', [AuthController::class, 'postLogin'])->name('login.post');
 
@@ -38,24 +57,4 @@ Route::get('registration', [AuthController::class, 'registration'])->name('regis
 
 Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 Route::post('enregistrement', [AuthController::class,'postRegistration' ])->name('enregistrement');
-/*middleware*/
-
-// Route::middleware(['auth', 'user-access:SuperAdmin'])->group(function () {
-//     Route::get('/home', [HomeController::class, 'index'])->name('home');
-
-// });
-
-// Route::middleware(['auth', 'user-access:president'])->group(function () {
-//     Route::get('/manager/home', [HomeController::class, 'managerHome'])->name('manager.home');
-// });
-
-// Route::middleware(['auth', 'user-access:admin'])->group(function () {
-//     Route::get('/admin/home', [HomeController::class, 'adminHome'])->name('admin.home');
-// });
-
-// Route::middleware(['auth', 'user-access:services'])->group(function () {
-//     Route::get('/service/home', [HomeController::class, 'adminHome'])->name('service.home');
-// });
-
-// for mailable routes
 

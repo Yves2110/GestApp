@@ -11,6 +11,7 @@ class under_objective extends Model
     use HasFactory;
     protected $fillable = [
         'role_id',
+        'objective_id',
         'label',
     ];
 

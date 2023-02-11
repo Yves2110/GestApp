@@ -18,4 +18,9 @@ class Objective extends Model
     {
         return $this->hasMany(under_objective::class);
     }
+
+    // public function activities()
+    // {
+    //     return $this->hasMany(Activities::class);
+    // }
 }

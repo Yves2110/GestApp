@@ -9,7 +9,6 @@ class Activities extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'role_id',
         'service_id',
         'objective_id',
         'under_objective_id',
@@ -31,5 +30,30 @@ class Activities extends Model
     public function objective()
     {
         return $this->belongsTo(Objective::class);
+    }
+
+    public function tdr()
+    {
+        return $this->hasMany(Tdr::class);
+    }
+
+    public function rapport()
+    {
+        return $this->hasMany(Rapport::class);
+    }
+
+    public function activity_variable()
+    {
+        return $this->hasMany(activity_variable::class);
+    }
+
+    public function final_status()
+    {
+        return $this->belongsTo(Final_status::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }
