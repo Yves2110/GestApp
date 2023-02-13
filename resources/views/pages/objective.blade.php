@@ -1,21 +1,21 @@
 @extends('layouts.home')
 @section('content')
-<center>
-    @if (session()->has('message'))
-        <div class="alert alert-success">
-            {{ session()->get('message') }}
-        </div>
-    @endif
-</center>
+    <center>
+        @if (session()->has('message'))
+            <div class="alert alert-success">
+                {{ session()->get('message') }}
+            </div>
+        @endif
+    </center>
     <div class="container d-flex">
 
         <div class="col-md-12">
             <!-- Vertically centered Modal -->
             <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#largeModal">
-            <button type="button" class="btn btn-primary" >
-                <i class="bi bi-plus-circle"></i>
-                Nouveau Objectif
-            </button></a>
+                <button type="button" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i>
+                    Nouveau Objectif
+                </button></a>
             <div class="modal fade" id="largeModal" tabindex="-1">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
@@ -45,56 +45,36 @@
                 </div>
             </div><!-- End Vertically centered Modal-->
 
- <!-- Table with hoverable rows -->
- <table class="table table-hover">
-    <thead>
-        <tr>
-            <th scope="col">Activités</th>
-            <th scope="col">intitulé</th>
-            <th scope="col">Position</th>
-            <th scope="col">Age</th>
-            <th scope="col">Start Date</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <th scope="row">1</th>
-            <td>Brandon Jacob</td>
-            <td>Designer</td>
-            <td>28</td>
-            <td>2016-05-25</td>
-        </tr>
-        <tr>
-            <th scope="row">2</th>
-            <td>Bridie Kessler</td>
-            <td>Developer</td>
-            <td>35</td>
-            <td>2014-12-05</td>
-        </tr>
-        <tr>
-            <th scope="row">3</th>
-            <td>Ashleigh Langosh</td>
-            <td>Finance</td>
-            <td>45</td>
-            <td>2011-08-12</td>
-        </tr>
-        <tr>
-            <th scope="row">4</th>
-            <td>Angus Grady</td>
-            <td>HR</td>
-            <td>34</td>
-            <td>2012-06-11</td>
-        </tr>
-        <tr>
-            <th scope="row">5</th>
-            <td>Raheem Lehner</td>
-            <td>Dynamic Division Officer</td>
-            <td>47</td>
-            <td>2011-04-19</td>
-        </tr>
-    </tbody>
-</table>
-<!-- End Table with hoverable rows -->
+            <!-- Table with hoverable rows -->
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">N°</th>
+                        <th scope="col">intitulé</th>
+                        <th scope="col">Action</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @forelse ($objectives as $objective)
+                        <tr>
+                            <th scope="row" class="fs-3 fw-bold">{{ $objective->id }} </th>
+                            <td class="fs-3 fw-bold">{{ $objective->label }} </td>
+                            <td>
+                                <a href="#" class="btn badge btn-info">Editer</a>
+                                <a href=" {{route ('delete.objective',$objective->id) }} " class="btn badge btn-danger">Supprimer</a>
+                            </td>
+                        </tr>
+                    @empty
+                        <h1></h1>
+                    @endforelse
+
+
+
+                </tbody>
+            </table>
+            <!-- End Table with hoverable rows -->
 
         </div>
     </div>

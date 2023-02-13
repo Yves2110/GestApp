@@ -71,7 +71,7 @@
                                 <div class="row mb-3">
                                     <label for="inputNumber" class="col-sm-2 col-form-label">Fichier</label>
                                     <div class="col-sm-10">
-                                        <input class="form-control" type="file" id="formFile" name="file">
+                                        <input class="form-control" type="file" id="formFile" name="fichier">
                                     </div>
                                 </div>
 

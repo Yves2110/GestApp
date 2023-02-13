@@ -33,7 +33,7 @@ class ActivitiesController extends Controller
     //     'price' => 'required|integer',
     //     'source_of_funding' => 'required|string',
     //     'structure' => 'required|string',
-    //     'status' => 'required|boolean',
+    //     'status' => 'required|',
     //     'commentary' => 'required|string',
     //   ]);
 

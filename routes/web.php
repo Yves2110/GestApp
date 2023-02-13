@@ -23,7 +23,7 @@ use App\Notifications\Gestapp;
 Route::get('service', [HomeController::class, 'serviceajout'])->name('services');
 Route::post('ajoutservice', [HomeController::class, 'servicestore'])->name('ajoutservice');
 
-/*route pour Authentification */
+/*route pour le Guide */
 Route::post('guide',[GuideController::class, 'store'])->name('guide');
 Route::get('delete/{id}', [GuideController::class, 'destroy'])->name('delete.guide');
 Route::get('Guide',[GuideController::class, 'index'])->name('Guide');
@@ -39,12 +39,13 @@ Route::post('ActivitiesStore', [ActivitiesController::class, 'ActivitiesStore'])
 // route pour les objectifs
 Route::get('objective', [ObjectiveController::class, 'index'])->name('Objective');
 Route::post('StoreObjective', [ObjectiveController::class, 'ObjectiveStore'])->name('ObjectiveStore');
+Route::get('delete_objective/{id}', [ObjectiveController::class, 'destroy'])->name('delete.objective');
 
 
 // route pour les sous objectif
 Route::get('under_objective', [ObjectiveController::class, 'under_index'])->name('Under_Objective');
 Route::post('StoreUnderObjective', [ObjectiveController::class, 'UnderObjectiveStore'])->name('UnderObjectiveStore');
-
+Route::get('delete_under_objective/{id}', [ObjectiveController::class, 'destroye'])->name('delete.under_objective');
 
 // Route::get('activites', [ServiceController::class, 'index']);
 // Route::get('objective', [ServiceController::class, 'text']); Route::get('under_objective', [ServiceController::class, 'texte']);

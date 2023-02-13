@@ -13,7 +13,8 @@ class ObjectiveController extends Controller
 
     {
         $services=service::all();
-        return view('pages.objective' ,compact('services'));
+        $objectives=Objective::all();
+        return view('pages.objective' ,compact('services','objectives'));
     }
 
     public function under_index()
@@ -21,7 +22,8 @@ class ObjectiveController extends Controller
     {
         $services=service::all();
         $objectives=Objective::all();
-        return view('pages.under_objective' ,compact('services','objectives'));
+        $under_objectives=under_objective::all();
+        return view('pages.under_objective' ,compact('services','objectives','under_objectives'));
     }
 
     public function ObjectiveStore(Request $request)
@@ -51,5 +53,19 @@ class ObjectiveController extends Controller
 
         return back()->with('message', 'Enregistrement effectué avec succès!');
 
+    }
+
+    public function destroy($id)
+    {
+        $objective=Objective::find($id);
+        $objective->delete();
+        return back()->with('message', 'Suppression effectué avec succès!');
+    }
+
+    public function destroye($id)
+    {
+        $under_objective=under_objective::find($id);
+        $under_objective->delete();
+        return back()->with('message', 'Suppression effectué avec succès!');
     }
 }
