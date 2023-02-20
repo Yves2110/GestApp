@@ -13,7 +13,7 @@ class ObjectiveController extends Controller
 
     {
         $services=service::all();
-        $objectives=Objective::all();
+        $objectives=Objective::paginate(5);
         return view('pages.objective' ,compact('services','objectives'));
     }
 

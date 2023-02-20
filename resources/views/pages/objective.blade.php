@@ -69,13 +69,10 @@
                     @empty
                         <h1></h1>
                     @endforelse
-
-
-
                 </tbody>
             </table>
             <!-- End Table with hoverable rows -->
-
+            {{$objectives->links()}}
         </div>
     </div>
 @endsection

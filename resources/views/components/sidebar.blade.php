@@ -25,7 +25,7 @@
                     @forelse ($services as $service)
                         <li>
                             <a href="#">
-                                <i class="bi bi-circle"></i><span>{{ $service->service }}</span>
+                                <i class="bi bi-circle"></i><span>{{ $service->label }}</span>
                             </a>
                         </li>
 

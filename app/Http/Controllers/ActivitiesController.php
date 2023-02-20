@@ -17,7 +17,8 @@ class ActivitiesController extends Controller
         $objectives=Objective::all();
         $underobjectives=under_objective::all();
         $services=service::all();
-        return view('pages.activites' ,compact('services', 'objectives', 'underobjectives'));
+        $activities=Activities::paginate(10);
+        return view('pages.activites' ,compact('services', 'objectives', 'underobjectives', 'activities'));
     }
 
     public function ActivitiesStore(Request $request)

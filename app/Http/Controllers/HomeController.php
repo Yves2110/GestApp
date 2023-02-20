@@ -10,7 +10,7 @@ class HomeController extends Controller
     public function index()
     {
         $services=service::all();
-        return view('layouts/home', ['services'=>$services] );
+        return view('layouts/starter', ['services'=>$services] );
     }
 
     public function serviceajout()

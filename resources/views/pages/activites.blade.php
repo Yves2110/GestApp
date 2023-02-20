@@ -1,13 +1,12 @@
 @extends('layouts.home')
 @section('content')
-
-<center>
-    @if (session()->has('message'))
-        <div class="alert alert-success">
-            {{ session()->get('message') }}
-        </div>
-    @endif
-</center>
+    <center>
+        @if (session()->has('message'))
+            <div class="alert alert-success">
+                {{ session()->get('message') }}
+            </div>
+        @endif
+    </center>
     <div class="titre">
         <h1>Activités</h1>
         <!-- Large Modal -->
@@ -24,7 +23,7 @@
                     </div>
                     <div class="modal-body">
 
-                        <form action="{{ route('ActivitiesStore') }}" method="post" >
+                        <form action="{{ route('ActivitiesStore') }}" method="post">
                             @csrf
                             <div class="container">
                                 <header>Formulaire</header>
@@ -58,7 +57,8 @@
                                         <input type="text" class="form-control" placeholder="Intitulé" name="label">
                                     </div>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control" placeholder="indicateur" name="indicator">
+                                        <input type="text" class="form-control" placeholder="indicateur"
+                                            name="indicator">
                                     </div>
                                     <div class="col-md-6">
                                         <input type="text" class="form-control" placeholder="Cible" name="target">
@@ -67,14 +67,17 @@
                                         <input type="number" class="form-control" placeholder="Montant" name="price">
                                     </div>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control" placeholder="Source de financement" name="source_of_funding">
+                                        <input type="text" class="form-control" placeholder="Source de financement"
+                                            name="source_of_funding">
                                     </div>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control" placeholder="Structure responsable" name="structure">
+                                        <input type="text" class="form-control" placeholder="Structure responsable"
+                                            name="structure">
                                     </div>
 
                                     <div class="col-md-6">
-                                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="Commentaire" name="commentary"></textarea>
+                                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="Commentaire"
+                                            name="commentary"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -101,21 +104,28 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ( as )
-
+                    @forelse ($activities as $activitie)
+                        <tr>
+                            <th scope="row"> {{ $activitie->id}} </th>
+                            <td> {{ $activitie->objective->label}}</td>
+                            <td> {{ $activitie->under_objective->label}}</td>
+                            <td class="fs-5 fw-bold"> {{ $activitie->label}}</td>
+                            <td> @if ($activitie->status == 0)
+                                 <div class="btn btn-danger"> Non valide</div>
+                            @else
+                            <div class="btn btn-success">valide</div>
+                            @endif</td>
+                            <td>
+                                <a href="#" class="btn badge btn-info">Editer</a>
+                                <a href=" {{route ('delete.objective',$objective->id) }} " class="btn badge btn-danger">Supprimer</a>
+                            </td>
+                        </tr>
                     @empty
-
+                    <h1>Pas d'activités</h1>
                     @endforelse
-                    <tr>
-                        <th scope="row">1</th>
-                        <td>Brandon Jacob</td>
-                        <td>Designer</td>
-                        <td>28</td>
-                        <td>2016-05-25</td>
-                    </tr>
-
                 </tbody>
             </table>
             <!-- End Table with hoverable rows -->
+            {{$activities->links()}}
         </div>
     @endsection

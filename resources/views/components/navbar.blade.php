@@ -3,7 +3,7 @@
   <header id="header" class="header fixed-top d-flex align-items-center">
 
     <div class="d-flex align-items-center justify-content-between">
-      <a href="index.html" class="logo d-flex align-items-center">
+      <a href=" {{route ('Home') }} " class="logo d-flex align-items-center">
         <img src=" {{asset('assets/img/logo1.png')}} " alt="">
         <span class="d-none d-lg-block">GestApp</span>
       </a>
