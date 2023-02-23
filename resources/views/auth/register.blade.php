@@ -15,12 +15,11 @@
 </head>
 
 <body>
-
-
     <center>
         @if (session()->has('message'))
-        <div class="alert alert-success">
-            {{ session()->get('message') }}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session()->get('message') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
     </center>
@@ -47,17 +46,14 @@
                         @if ($errors->has('lastname'))
                             <span class="text-danger">{{ $errors->first('lastname') }}</span>
                         @endif
-
                     </div>
                 </div>
                 <div class="row">
-
-                    <div class="col-md-6 mt-md-0 mt-3">
-                        <label>Services</label>
+                    <div class="col-md-6 mt-md-0 mt-3 role">
                         <select id="sub" id="sub" name="service_id" required>
-                            <option value="" selected hidden>Choix Option</option>
+                            <option value="" selected hidden>Choix du Service</option>
                             @foreach ($services as $service)
-                                <option value="{{ $service->id }}"> {{ $service->service }} </option>
+                                <option value="{{ $service->id }}"> {{ $service->label }} </option>
                             @endforeach
                         </select>
                         @if ($errors->has('service_id'))
@@ -96,7 +92,7 @@
                 </div>
 
                 <div class=" my-md-2 my-3"></div>
-                
+
                 <button type="submit">
                     <div class="btn btn-primary">Enregistrer</div>
                 </button>

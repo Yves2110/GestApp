@@ -1,12 +1,13 @@
 @extends('layouts.home')
 @section('content')
-    <center>
-        @if (session()->has('message'))
-            <div class="alert alert-success">
-                {{ session()->get('message') }}
-            </div>
-        @endif
-    </center>
+<center>
+    @if (session()->has('message'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session()->get('message') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+</center>
     <div class="container d-flex">
 
         <div class="col-md-12">

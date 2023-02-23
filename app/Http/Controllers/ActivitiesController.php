@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Activities;
 use App\Models\Objective;
+use App\Models\Periode;
 use App\Models\service;
 use App\Models\under_objective;
 use Illuminate\Http\Request;
@@ -18,7 +19,8 @@ class ActivitiesController extends Controller
         $underobjectives=under_objective::all();
         $services=service::all();
         $activities=Activities::paginate(10);
-        return view('pages.activites' ,compact('services', 'objectives', 'underobjectives', 'activities'));
+        $trimestres=Periode::all();
+        return view('pages.activites' ,compact('services', 'objectives', 'underobjectives', 'activities', 'trimestres'));
     }
 
     public function ActivitiesStore(Request $request)
@@ -28,6 +30,7 @@ class ActivitiesController extends Controller
     //     'service_id' => 'required|',
     //     'objective_id' => 'required|',
     //     'under_objective_id' => 'required|',
+    //     'periode_id' => 'required|',
     //     'label' => 'required|string',
     //     'indicator' => 'required|string',
     //     'target' => 'required|string',
@@ -42,6 +45,7 @@ class ActivitiesController extends Controller
             'service_id' => $request->service_id,
             'objective_id' => $request->objective_id,
             'under_objective_id' => $request->under_objective_id,
+            'periode_id' => $request->periode_id,
             'label' => $request->label,
             'indicator' => $request->indicator,
             'target'=>  $request->target,

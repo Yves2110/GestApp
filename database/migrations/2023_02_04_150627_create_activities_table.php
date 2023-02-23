@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('service_id')->constrained();
             $table->foreignId('objective_id')->constrained();
             $table->foreignId('under_objective_id')->constrained();
+            $table->foreignId('periode_id')->constrained();
             $table->string('label');
             $table->string('indicator');
             $table->string('target');

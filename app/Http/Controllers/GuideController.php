@@ -24,11 +24,11 @@ class GuideController extends Controller
             ]
         );
         $input = $request->all();
-        if ($docs = $request->file('file')) {
+        if ($docs = $request->file('fichier')) {
             $destinationPath = 'docs/';
             $guides = date('YmdHis') . "." . $docs->getClientOriginalExtension();
             $docs->move($destinationPath, $guides);
-            $input['file'] = "$guides";
+            $input['fichier'] = "$guides";
         }
 
         guide::create($input);

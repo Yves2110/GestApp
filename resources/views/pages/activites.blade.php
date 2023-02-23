@@ -1,12 +1,13 @@
 @extends('layouts.home')
 @section('content')
-    <center>
-        @if (session()->has('message'))
-            <div class="alert alert-success">
-                {{ session()->get('message') }}
-            </div>
-        @endif
-    </center>
+<center>
+    @if (session()->has('message'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session()->get('message') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+</center>
     <div class="titre">
         <h1>Activités</h1>
         <!-- Large Modal -->
@@ -36,7 +37,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-6 my-2">
                                         <select id="inputState" class="form-select" name="under_objective_id">
                                             <option value="" selected hidden>Choix de sous objectif</option>
                                             @foreach ($underobjectives as $underobjective)
@@ -45,7 +46,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-6 my-2">
                                         <select id="inputState" class="form-select" name="service_id">
                                             <option value="" selected hidden>Service appartenant</option>
                                             @foreach ($services as $service)
@@ -53,29 +54,37 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-6 my-2">
+                                        <select id="inputState" class="form-select" name="periode_id">
+                                            <option value="" selected hidden>Trimestre</option>
+                                            @foreach ($trimestres as $trimestre)
+                                                <option value="{{ $trimestre->id }}"> {{ $trimestre->label }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 my-2">
                                         <input type="text" class="form-control" placeholder="Intitulé" name="label">
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 my-2">
                                         <input type="text" class="form-control" placeholder="indicateur"
                                             name="indicator">
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 my-2">
                                         <input type="text" class="form-control" placeholder="Cible" name="target">
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 my-2">
                                         <input type="number" class="form-control" placeholder="Montant" name="price">
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 my-2">
                                         <input type="text" class="form-control" placeholder="Source de financement"
                                             name="source_of_funding">
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 my-2">
                                         <input type="text" class="form-control" placeholder="Structure responsable"
                                             name="structure">
                                     </div>
 
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 my-2">
                                         <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="Commentaire"
                                             name="commentary"></textarea>
                                     </div>

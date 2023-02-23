@@ -5,15 +5,16 @@
 
             <center>
                 @if (session()->has('message'))
-                    <div class="alert alert-success">
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
                         {{ session()->get('message') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
             </center>
 
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title">Table with stripped rows</h5>
+                    <h5 class="card-title">Guide d'évaluation des activités</h5>
 
                     <!-- Table with stripped rows -->
                     <table class="table table-striped">
@@ -32,7 +33,7 @@
                                     <th scope="row"> {{ $guide->id }} </th>
                                     {{-- <td> {{ $guide->file }}</td> --}}
                                   <td> <button class="btn btn-lg btn-success ">
-                                        <a href="{{ asset ('docs/'.$guide->file) }}" class="text-white" target="_blank">Guide</a>
+                                        <a href="{{ asset ('docs/'.$guide->fichier) }}" class="text-white" target="_blank">Guide</a>
                                    </button> </td>
                                     <td> {{ $guide->created_at }}</td>
                                     <td> {{ $guide->update_at }}</td>

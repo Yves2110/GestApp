@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         AdminSeeder::class,
         SuperAdminSeeder::class,
         PresidentSeeder::class,
+        PeriodeSeeder::class,
        ]);
     }
 }
