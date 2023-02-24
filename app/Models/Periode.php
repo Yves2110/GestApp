@@ -15,6 +15,6 @@ class Periode extends Model
 
     public function activity()
     {
-        return $this->belongsTo(Activities::class);
+        return $this->hasMany(Activities::class);
     }
 }

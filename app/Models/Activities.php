@@ -12,6 +12,7 @@ class Activities extends Model
         'service_id',
         'objective_id',
         'under_objective_id',
+        'periode_id',
         'label',
         'indicator',
         'target',
@@ -40,6 +41,11 @@ class Activities extends Model
     public function rapport()
     {
         return $this->hasMany(Rapport::class);
+    }
+
+    public function periode()
+    {
+        return $this->belongsTo(Periode::class);
     }
 
     public function activity_variable()

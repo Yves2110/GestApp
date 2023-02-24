@@ -1,17 +1,18 @@
 @extends('layouts.home')
 @section('content')
-<center>
-    @if (session()->has('message'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session()->get('message') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
-</center>
+    <center>
+        @if (session()->has('message'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session()->get('message') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+    </center>
     <div class="titre">
         <h1>Activités</h1>
         <!-- Large Modal -->
-        <button type="button" class="btn btn-primary text-light float-end" data-bs-toggle="modal" data-bs-target="#largeModal">
+        <button type="button" class="btn btn-primary text-light float-end" data-bs-toggle="modal"
+            data-bs-target="#largeModal">
             Ajouter
         </button>
 
@@ -108,6 +109,7 @@
                         <th scope="col">N° d'objectif</th>
                         <th scope="col">N° de sous objectif</th>
                         <th scope="col">Intitulé</th>
+                        <th scope="col">Périodes</th>
                         <th scope="col">Status</th>
                         <th scope="col">Action</th>
                     </tr>
@@ -115,26 +117,30 @@
                 <tbody>
                     @forelse ($activities as $activitie)
                         <tr>
-                            <th scope="row"> {{ $activitie->id}} </th>
-                            <td> {{ $activitie->objective->label}}</td>
-                            <td> {{ $activitie->under_objective->label}}</td>
-                            <td class="fs-5 fw-bold"> {{ $activitie->label}}</td>
-                            <td> @if ($activitie->status == 0)
-                                 <div class="btn btn-danger"> Non valide</div>
-                            @else
-                            <div class="btn btn-success">valide</div>
-                            @endif</td>
+                            <th scope="row"> {{ $activitie->id }} </th>
+                            <td> {{ $activitie->objective->id }}</td>
+                            <td> {{ $activitie->under_objective->id }}</td>
+                            <td class="fs-5 fw-bold"> {{ $activitie->label }}</td>
+                            <td class="fs-5 fw-bold"> {{ $activitie->periode->label }}</td>
+                            <td>
+                                @if ($activitie->status == 0)
+                                    <div class="btn btn-danger"> Non valide</div>
+                                @else
+                                    <div class="btn btn-success">valide</div>
+                                @endif
+                            </td>
                             <td>
                                 <a href="#" class="btn badge btn-info">Editer</a>
-                                <a href=" {{route ('delete.objective',$objective->id) }} " class="btn badge btn-danger">Supprimer</a>
+                                <a href=" {{ route('delete.objective', $objective->id) }} "
+                                    class="btn badge btn-danger">Supprimer</a>
                             </td>
                         </tr>
                     @empty
-                    <h1>Pas d'activités</h1>
+                        <h1>Pas d'activités</h1>
                     @endforelse
                 </tbody>
             </table>
             <!-- End Table with hoverable rows -->
-            {{$activities->links()}}
+            {{ $activities->links() }}
         </div>
     @endsection
