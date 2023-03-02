@@ -57,7 +57,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#">
+                        <a href="{{ route('trimestre') }}">
                             <i class="bi bi-calendar-month"></i><span>Trimestres</span>
                         </a>
                     </li>
