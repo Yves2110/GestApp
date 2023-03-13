@@ -42,7 +42,7 @@ Route::post('ActivitiesStore', [ActivitiesController::class, 'ActivitiesStore'])
 Route::get('objective', [ObjectiveController::class, 'index'])->name('Objective');
 Route::post('StoreObjective', [ObjectiveController::class, 'ObjectiveStore'])->name('ObjectiveStore');
 Route::get('delete_objective/{id}', [ObjectiveController::class, 'destroy'])->name('delete.objective');
-Route::get('EditObjective/{objective}', [ObjectiveController::class, 'objectiveedit'])->name('edit.objective');
+Route::get('EditObjective/{id}', [ObjectiveController::class, 'objectiveedit'])->name('edit.objective');
 Route::put('UpdateObjective', [ObjectiveController::class, 'objectiveupdate'])->name('ObjectiveUpdate');
 // Route::resource('objective', ObjectiveController::class);
 

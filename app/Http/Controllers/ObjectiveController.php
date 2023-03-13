@@ -67,19 +67,21 @@ class ObjectiveController extends Controller
         return back()->with('message', 'Suppression effectué avec succès!');
     }
 
-    public function objectiveedit(Objective $id)
+    public function objectiveedit($id)
     {
-        $objectives = Objective::paginate(5);
+        $objectives = Objective::find($id);
         $services = service::all();
-        return view('pages.objective', compact('objective','objectives', 'services'));
+        return view('pages.editobjective', compact('objectives', 'services'));
     }
 
     public function objectiveupdate(Request $request, Objective $objective){
         $objective=Objective::find($objective);
-        $objective->update([
-            "role_id" => 3,
-            "label" => $request->label,
+        $request->validate([
+            'role_id'=> 3,
+            'label'=> 'required',
         ]);
-        return back()->with('message', 'Modification effectué avec succès!');
+        $objective->update( $request->all());
+        return redirect()->route('objective')
+        ->with('message', 'Modification effectué avec succès!');
     }
 }

@@ -118,8 +118,8 @@
                     @forelse ($activities as $activitie)
                         <tr>
                             <th scope="row"> {{ $activitie->id }} </th>
-                            <td> {{ $activitie->objective->id }}</td>
-                            <td> {{ $activitie->under_objective->id }}</td>
+                            <td> {{ $activitie->objective->label }}</td>
+                            <td> {{ $activitie->under_objective->label }}</td>
                             <td class="fs-5 fw-bold"> {{ $activitie->label }}</td>
                             <td class="fs-5 fw-bold"> {{ $activitie->periode->label }}</td>
                             <td>
