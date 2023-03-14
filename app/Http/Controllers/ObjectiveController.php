@@ -69,18 +69,20 @@ class ObjectiveController extends Controller
 
     public function objectiveedit($id)
     {
-        $objectives = Objective::find($id);
+        $objective = Objective::find($id);
         $services = service::all();
-        return view('pages.editobjective', compact('objectives', 'services'));
+        return view('pages.editobjective', compact('objective', 'services'));
     }
 
     public function objectiveupdate(Request $request, Objective $objective){
         $objective=Objective::find($objective);
         $request->validate([
-            'role_id'=> 3,
             'label'=> 'required',
         ]);
-        $objective->update( $request->all());
+        $objective->update([
+            'role_id'=>3,
+            'label'=> $request->label,
+        ]);
         return redirect()->route('objective')
         ->with('message', 'Modification effectué avec succès!');
     }

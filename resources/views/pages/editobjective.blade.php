@@ -4,12 +4,11 @@
         <form action="{{ route('ObjectiveUpdate', $objective->id) }}" method="post">
             @csrf
             @method('PUT')
-            <div class="modal-header">
-                <h5 class="modal-title">Modification de Objectif</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                    aria-label="Close"></button>
+            <div class="modal-header mb-5">
+                <h5 class="modal-title">Modification de l'Objectif</h5>
+                
             </div>
-            <div class="modal-body">
+            <div class="modal-body mt-5">
 
                 <div class="row mb-3">
                     <label for="inputNumber" class="col-sm-2 col-form-label">Objectif</label>
@@ -20,9 +19,8 @@
                 </div>
 
             </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">enregistrer</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            <div class="modal-footer my-2">
+                <button type="submit" class="btn btn-primary">Modifier</button>
             </div>
         </form>
     </div>
