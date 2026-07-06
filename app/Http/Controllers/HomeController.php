@@ -9,8 +9,8 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $services=service::all();
-        return view('layouts/starter', ['services'=>$services] );
+        $services=service::with('activities')->get();
+        return view('pages.dashboard', ['services'=>$services] );
     }
 
     public function serviceajout()

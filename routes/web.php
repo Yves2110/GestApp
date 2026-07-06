@@ -57,12 +57,35 @@ route::get('trimestre', [PeriodeController::class, 'view'])->name('trimestre');
 // Route::get('activites', [ServiceController::class, 'index']);
 // Route::get('objective', [ServiceController::class, 'text']); Route::get('under_objective', [ServiceController::class, 'texte']);
 
-Route::post('post-login', [AuthController::class, 'postLogin'])->name('login.post');
+Route::post('post-login', [AuthController::class, 'postLogin'])->name('login.post')->middleware('throttle:5,1');
 
 Route::get('registration', [AuthController::class, 'registration'])->name('register');
 
 // Route::post('post-registration', [AuthController::class, 'postRegistration'])->name('register.post');
 
 Route::get('logout', [AuthController::class, 'logout'])->name('logout');
-Route::post('enregistrement', [AuthController::class,'postRegistration' ])->name('enregistrement');
+Route::post('enregistrement', [AuthController::class,'postRegistration' ])->name('enregistrement')->middleware('throttle:3,1');
+
+// Routes pour l'analytique et les statistiques
+Route::get('analytics', [\App\Http\Controllers\AnalyticsController::class, 'index'])->name('analytics')->middleware('auth');
+Route::get('analytics/service/{serviceId}', [\App\Http\Controllers\AnalyticsController::class, 'getServiceStats'])->name('analytics.service')->middleware('auth');
+Route::get('api/analytics/activities-by-service', [\App\Http\Controllers\AnalyticsController::class, 'getActivitiesByService'])->name('api.analytics.activities-by-service')->middleware('auth');
+Route::get('api/analytics/monthly-evolution', [\App\Http\Controllers\AnalyticsController::class, 'getMonthlyEvolution'])->name('api.analytics.monthly-evolution')->middleware('auth');
+Route::get('api/analytics/budget-by-service', [\App\Http\Controllers\AnalyticsController::class, 'getBudgetByService'])->name('api.analytics.budget-by-service')->middleware('auth');
+Route::get('analytics/export', [\App\Http\Controllers\AnalyticsController::class, 'exportExcel'])->name('analytics.export')->middleware('auth');
+Route::get('analytics/performance', [\App\Http\Controllers\AnalyticsController::class, 'performanceReport'])->name('analytics.performance')->middleware('auth');
+
+// Routes pour les exports
+Route::get('export', [\App\Http\Controllers\ExportController::class, 'exportConfig'])->name('export.config')->middleware('auth');
+Route::post('export/process', [\App\Http\Controllers\ExportController::class, 'processExport'])->name('export.process')->middleware('auth');
+Route::get('export/activities/csv', [\App\Http\Controllers\ExportController::class, 'exportActivitiesCSV'])->name('export.activities.csv')->middleware('auth');
+Route::get('export/stats/csv', [\App\Http\Controllers\ExportController::class, 'exportGlobalStatsCSV'])->name('export.stats.csv')->middleware('auth');
+Route::get('export/performance/csv', [\App\Http\Controllers\ExportController::class, 'exportPerformanceCSV'])->name('export.performance.csv')->middleware('auth');
+Route::get('api/export/data', [\App\Http\Controllers\ExportController::class, 'getExportData'])->name('api.export.data')->middleware('auth');
+
+// Routes pour le monitoring (admin uniquement)
+Route::get('monitoring', [\App\Http\Controllers\MonitoringController::class, 'index'])->name('monitoring')->middleware('auth');
+Route::get('api/health', [\App\Http\Controllers\MonitoringController::class, 'healthCheck'])->name('api.health')->middleware('auth');
+Route::get('api/metrics', [\App\Http\Controllers\MonitoringController::class, 'getMetrics'])->name('api.metrics')->middleware('auth');
+Route::get('api/logs', [\App\Http\Controllers\MonitoringController::class, 'getLogs'])->name('api.logs')->middleware('auth');
 

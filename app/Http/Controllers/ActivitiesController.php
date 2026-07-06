@@ -14,32 +14,30 @@ class ActivitiesController extends Controller
     public function index()
 
     {
-        // $services=Activities::all();
-        $objectives=Objective::all();
-        $underobjectives=under_objective::all();
+        $objectives=Objective::with(['under_objectives'])->get();
+        $underobjectives=under_objective::with('objective')->get();
         $services=service::all();
-        $activities=Activities::paginate(10);
+        $activities=Activities::with(['service', 'objective', 'under_objective', 'periode'])->paginate(10);
         $trimestres=Periode::all();
-        return view('pages.activites' ,compact('services', 'objectives', 'underobjectives', 'activities', 'trimestres'));
+        return view('pages.activites-modern' ,compact('services', 'objectives', 'underobjectives', 'activities', 'trimestres'));
     }
 
     public function ActivitiesStore(Request $request)
 
     {
-    //   request()->validate([
-    //     'service_id' => 'required|',
-    //     'objective_id' => 'required|',
-    //     'under_objective_id' => 'required|',
-    //     'periode_id' => 'required|',
-    //     'label' => 'required|string',
-    //     'indicator' => 'required|string',
-    //     'target' => 'required|string',
-    //     'price' => 'required|integer',
-    //     'source_of_funding' => 'required|string',
-    //     'structure' => 'required|string',
-    //     'status' => 'required|',
-    //     'commentary' => 'required|string',
-    //   ]);
+        request()->validate([
+            'service_id' => 'required|exists:services,id',
+            'objective_id' => 'required|exists:objectives,id',
+            'under_objective_id' => 'required|exists:under_objectives,id',
+            'periode_id' => 'required|exists:periodes,id',
+            'label' => 'required|string|max:255',
+            'indicator' => 'required|string|max:255',
+            'target' => 'required|string|max:255',
+            'price' => 'required|integer|min:0',
+            'source_of_funding' => 'required|string|max:255',
+            'structure' => 'required|string|max:255',
+            'commentary' => 'nullable|string|max:5000',
+        ]);
 
         Activities::create([
             'service_id' => $request->service_id,

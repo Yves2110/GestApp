@@ -1,0 +1,628 @@
+/* =============================================
+   GESTAPP - UNIVERSITY THEME DESIGN SYSTEM
+   ============================================= */
+
+:root {
+  /* University Color Palette */
+  --university-primary: #1e3a8a;        /* Deep Blue - Trust & Authority */
+  --university-secondary: #64748b;      /* Slate Gray - Professional */
+  --university-accent: #dc2626;         /* University Red - Energy */
+  --university-success: #16a34a;        /* Green - Success */
+  --university-warning: #f59e0b;        /* Amber - Warning */
+  --university-danger: #dc2626;         /* Red - Danger */
+  --university-info: #0ea5e9;           /* Sky Blue - Information */
+  
+  /* Neutral Colors */
+  --university-gray-50: #f8fafc;
+  --university-gray-100: #f1f5f9;
+  --university-gray-200: #e2e8f0;
+  --university-gray-300: #cbd5e1;
+  --university-gray-400: #94a3b8;
+  --university-gray-500: #64748b;
+  --university-gray-600: #475569;
+  --university-gray-700: #334155;
+  --university-gray-800: #1e293b;
+  --university-gray-900: #0f172a;
+  
+  /* Typography */
+  --university-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --university-font-size-xs: 0.75rem;
+  --university-font-size-sm: 0.875rem;
+  --university-font-size-base: 1rem;
+  --university-font-size-lg: 1.125rem;
+  --university-font-size-xl: 1.25rem;
+  --university-font-size-2xl: 1.5rem;
+  --university-font-size-3xl: 1.875rem;
+  
+  /* Spacing */
+  --university-spacing-xs: 0.25rem;
+  --university-spacing-sm: 0.5rem;
+  --university-spacing-md: 1rem;
+  --university-spacing-lg: 1.5rem;
+  --university-spacing-xl: 2rem;
+  --university-spacing-2xl: 3rem;
+  
+  /* Border Radius */
+  --university-radius-sm: 0.25rem;
+  --university-radius-md: 0.375rem;
+  --university-radius-lg: 0.5rem;
+  --university-radius-xl: 0.75rem;
+  
+  /* Shadows */
+  --university-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --university-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --university-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+}
+
+/* =============================================
+   BASE STYLES
+   ============================================= */
+body {
+  font-family: var(--university-font-family);
+  font-size: var(--university-font-size-base);
+  line-height: 1.6;
+  color: var(--university-gray-800);
+  background-color: var(--university-gray-50);
+}
+
+/* =============================================
+   BOOTSTRAP OVERRIDES
+   ============================================= */
+.btn-primary {
+  background-color: var(--university-primary);
+  border-color: var(--university-primary);
+  font-weight: 500;
+  padding: 0.5rem 1.5rem;
+  border-radius: var(--university-radius-md);
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: #1e40af;
+  border-color: #1e40af;
+  transform: translateY(-1px);
+  box-shadow: var(--university-shadow-md);
+}
+
+.btn-secondary {
+  background-color: var(--university-secondary);
+  border-color: var(--university-secondary);
+  color: white;
+  font-weight: 500;
+}
+
+.btn-success {
+  background-color: var(--university-success);
+  border-color: var(--university-success);
+}
+
+.btn-warning {
+  background-color: var(--university-warning);
+  border-color: var(--university-warning);
+  color: var(--university-gray-900);
+}
+
+.btn-danger {
+  background-color: var(--university-danger);
+  border-color: var(--university-danger);
+}
+
+/* =============================================
+   CARD COMPONENTS
+   ============================================= */
+.card {
+  border: 1px solid var(--university-gray-200);
+  border-radius: var(--university-radius-lg);
+  box-shadow: var(--university-shadow-sm);
+  transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: var(--university-shadow-md);
+}
+
+.card-header {
+  background-color: var(--university-gray-50);
+  border-bottom: 1px solid var(--university-gray-200);
+  font-weight: 600;
+  color: var(--university-gray-800);
+}
+
+/* =============================================
+   FORM COMPONENTS
+   ============================================= */
+.form-control {
+  border: 1px solid var(--university-gray-300);
+  border-radius: var(--university-radius-md);
+  padding: 0.625rem 0.875rem;
+  font-size: var(--university-font-size-base);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-control:focus {
+  border-color: var(--university-primary);
+  box-shadow: 0 0 0 0.2rem rgba(30, 58, 138, 0.25);
+}
+
+.form-label {
+  font-weight: 500;
+  color: var(--university-gray-700);
+  margin-bottom: 0.5rem;
+}
+
+.form-select {
+  border: 1px solid var(--university-gray-300);
+  border-radius: var(--university-radius-md);
+  padding: 0.625rem 2.5rem 0.625rem 0.875rem;
+}
+
+/* =============================================
+   NAVIGATION
+   ============================================= */
+.navbar {
+  background-color: white !important;
+  box-shadow: var(--university-shadow-sm);
+  border-bottom: 1px solid var(--university-gray-200);
+}
+
+.navbar-brand {
+  color: var(--university-primary) !important;
+  font-weight: 600;
+  font-size: var(--university-font-size-xl);
+}
+
+.nav-link {
+  color: var(--university-gray-600) !important;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: var(--university-radius-md);
+  transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+  color: var(--university-primary) !important;
+  background-color: var(--university-gray-50);
+}
+
+.nav-link.active {
+  color: var(--university-primary) !important;
+  background-color: var(--university-gray-100);
+}
+
+/* =============================================
+   TABLES
+   ============================================= */
+.table {
+  border-radius: var(--university-radius-lg);
+  overflow: hidden;
+}
+
+.table thead th {
+  background-color: var(--university-gray-50);
+  border-bottom: 2px solid var(--university-gray-200);
+  font-weight: 600;
+  color: var(--university-gray-700);
+  padding: 1rem;
+}
+
+.table tbody td {
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--university-gray-100);
+  vertical-align: middle;
+}
+
+.table tbody tr:hover {
+  background-color: var(--university-gray-50);
+}
+
+/* =============================================
+   ALERTS
+   ============================================= */
+.alert {
+  border: none;
+  border-radius: var(--university-radius-md);
+  padding: 1rem 1.25rem;
+  font-weight: 500;
+}
+
+.alert-success {
+  background-color: #dcfce7;
+  color: var(--university-success);
+  border-left: 4px solid var(--university-success);
+}
+
+.alert-danger {
+  background-color: #fef2f2;
+  color: var(--university-danger);
+  border-left: 4px solid var(--university-danger);
+}
+
+.alert-warning {
+  background-color: #fffbeb;
+  color: var(--university-warning);
+  border-left: 4px solid var(--university-warning);
+}
+
+.alert-info {
+  background-color: #f0f9ff;
+  color: var(--university-info);
+  border-left: 4px solid var(--university-info);
+}
+
+/* =============================================
+   MODALS
+   ============================================= */
+.modal-content {
+  border: none;
+  border-radius: var(--university-radius-lg);
+  box-shadow: var(--university-shadow-lg);
+}
+
+.modal-header {
+  background-color: var(--university-gray-50);
+  border-bottom: 1px solid var(--university-gray-200);
+  border-radius: var(--university-radius-lg) var(--university-radius-lg) 0 0;
+}
+
+.modal-title {
+  font-weight: 600;
+  color: var(--university-gray-800);
+}
+
+/* =============================================
+   ACCESSIBILITY IMPROVEMENTS
+   ============================================= */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus styles for keyboard navigation */
+.btn:focus,
+.form-control:focus,
+.form-select:focus,
+.nav-link:focus {
+  outline: 2px solid var(--university-primary);
+  outline-offset: 2px;
+}
+
+/* =============================================
+   UNIVERSITY SPECIFIC COMPONENTS
+   ============================================= */
+.university-header {
+  background: linear-gradient(135deg, var(--university-primary) 0%, #1e40af 100%);
+  color: white;
+  padding: var(--university-spacing-xl) 0;
+}
+
+.university-card {
+  border-left: 4px solid var(--university-primary);
+  background: white;
+}
+
+.university-badge {
+  background-color: var(--university-primary);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--university-radius-lg);
+  font-size: var(--university-font-size-sm);
+  font-weight: 500;
+}
+
+.university-stats {
+  background: linear-gradient(135deg, var(--university-gray-50) 0%, white 100%);
+  border: 1px solid var(--university-gray-200);
+  border-radius: var(--university-radius-lg);
+  padding: var(--university-spacing-lg);
+}
+
+/* =============================================
+   RESPONSIVE DESIGN - OPTIMIZED
+   ============================================= */
+
+/* Extra Small Devices (phones, 576px and down) */
+@media (max-width: 575.98px) {
+  .container {
+    padding: 0 var(--university-spacing-sm);
+    max-width: 100%;
+  }
+  
+  /* Typography optimization */
+  h1 { font-size: var(--university-font-size-2xl); }
+  h2 { font-size: var(--university-font-size-xl); }
+  h3 { font-size: var(--university-font-size-lg); }
+  
+  /* Buttons optimization */
+  .btn {
+    padding: 0.5rem 0.75rem;
+    font-size: var(--university-font-size-sm);
+    min-height: 44px; /* Touch-friendly */
+  }
+  
+  .btn-group .btn {
+    padding: 0.375rem 0.5rem;
+    font-size: var(--university-font-size-xs);
+  }
+  
+  /* Cards optimization */
+  .card {
+    margin-bottom: var(--university-spacing-sm);
+    border-radius: var(--university-radius-md);
+  }
+  
+  .card-body {
+    padding: var(--university-spacing-md);
+  }
+  
+  .card-header {
+    padding: var(--university-spacing-sm) var(--university-spacing-md);
+  }
+  
+  /* Tables optimization - Mobile friendly */
+  .table {
+    font-size: var(--university-font-size-xs);
+    margin-bottom: 0;
+  }
+  
+  .table thead th,
+  .table tbody td {
+    padding: 0.375rem 0.5rem;
+    vertical-align: middle;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
+  }
+  
+  .table thead th {
+    font-size: var(--university-font-size-xs);
+    font-weight: 600;
+  }
+  
+  /* Mobile table wrapper */
+  .table-responsive {
+    border-radius: var(--university-radius-md);
+    box-shadow: var(--university-shadow-sm);
+  }
+  
+  /* Forms optimization */
+  .form-control {
+    padding: 0.5rem 0.75rem;
+    font-size: var(--university-font-size-sm);
+    min-height: 44px; /* Touch-friendly */
+  }
+  
+  .form-select {
+    padding: 0.5rem 2rem 0.5rem 0.75rem;
+    font-size: var(--university-font-size-sm);
+    min-height: 44px;
+  }
+  
+  .form-label {
+    font-size: var(--university-font-size-sm);
+    margin-bottom: 0.375rem;
+  }
+  
+  /* Alerts optimization */
+  .alert {
+    padding: 0.75rem var(--university-spacing-md);
+    font-size: var(--university-font-size-sm);
+  }
+  
+  /* Navbar optimization */
+  .navbar-brand {
+    font-size: var(--university-font-size-lg);
+  }
+  
+  .navbar-nav .nav-link {
+    padding: 0.5rem var(--university-spacing-sm);
+    font-size: var(--university-font-size-sm);
+  }
+  
+  /* Dashboard cards */
+  .university-stats {
+    margin-bottom: var(--university-spacing-sm);
+  }
+  
+  .university-stats .card-body {
+    padding: var(--university-spacing-sm);
+  }
+  
+  /* Charts containers */
+  .canvas-container {
+    max-height: 250px;
+    overflow: hidden;
+  }
+  
+  /* Modals optimization */
+  .modal-dialog {
+    margin: var(--university-spacing-sm);
+    max-width: calc(100% - var(--university-spacing-md));
+  }
+  
+  .modal-body {
+    padding: var(--university-spacing-sm);
+  }
+  
+  /* Hide less important elements on mobile */
+  .d-none-mobile {
+    display: none !important;
+  }
+  
+  /* Compact layouts */
+  .row.g-4 > .col {
+    margin-bottom: var(--university-spacing-sm);
+  }
+  
+  /* Badge optimization */
+  .badge {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+  }
+}
+
+/* Small Devices (landscape phones, 576px and up) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+  .container {
+    padding: 0 var(--university-spacing-md);
+  }
+  
+  .btn {
+    padding: 0.5rem 1rem;
+    font-size: var(--university-font-size-sm);
+  }
+  
+  .card {
+    margin-bottom: var(--university-spacing-md);
+  }
+  
+  .table {
+    font-size: var(--university-font-size-sm);
+  }
+  
+  .table thead th,
+  .table tbody td {
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .form-control {
+    padding: 0.625rem 0.875rem;
+    font-size: var(--university-font-size-sm);
+  }
+}
+
+/* Medium Devices (tablets, 768px and up) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+  /* Tablet-specific optimizations */
+  .table thead th,
+  .table tbody td {
+    padding: 0.75rem 1rem;
+  }
+  
+  .card-body {
+    padding: var(--university-spacing-lg);
+  }
+  
+  .university-stats .card-body {
+    padding: var(--university-spacing-md);
+  }
+  
+  /* Charts optimization for tablets */
+  .canvas-container {
+    max-height: 300px;
+  }
+}
+
+/* Large Devices (desktops, 992px and up) */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+  /* Desktop-specific optimizations */
+  .table thead th,
+  .table tbody td {
+    padding: 1rem;
+  }
+  
+  /* Better spacing on larger screens */
+  .container {
+    max-width: 960px;
+  }
+}
+
+/* Extra Large Devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+  /* Extra large screen optimizations */
+  .container {
+    max-width: 1140px;
+  }
+  
+  /* Better use of space on large screens */
+  .row.g-4 > .col {
+    margin-bottom: 0;
+  }
+  
+  /* Charts can be larger */
+  .canvas-container {
+    max-height: 400px;
+  }
+}
+
+/* Ultra-wide screens optimization */
+@media (min-width: 1400px) {
+  .container {
+    max-width: 1320px;
+  }
+  
+  /* Prevent content from being too wide */
+  .container-fluid {
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+}
+
+/* Landscape orientation optimizations */
+@media (max-width: 991.98px) and (orientation: landscape) {
+  .navbar {
+    padding: 0.5rem 0;
+  }
+  
+  .university-header {
+    padding: var(--university-spacing-lg) 0;
+  }
+  
+  .card-body {
+    padding: var(--university-spacing-md);
+  }
+}
+
+/* High DPI displays optimization */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  /* Sharper text on high DPI displays */
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  .card {
+    border-width: 0.5px;
+  }
+  
+  .table {
+    border-width: 0.5px;
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* =============================================
+   PRINT STYLES
+   ============================================= */
+@media print {
+  .btn,
+  .navbar,
+  .modal {
+    display: none !important;
+  }
+  
+  .card {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+  
+  body {
+    background: white;
+    color: black;
+  }
+}

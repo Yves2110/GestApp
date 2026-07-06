@@ -3,23 +3,27 @@
 namespace Illuminate\Support\Testing\Fakes;
 
 use Closure;
+use Illuminate\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Contracts\Events\ShouldDispatchAfterCommit;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Illuminate\Support\Traits\ForwardsCalls;
 use Illuminate\Support\Traits\ReflectsClosures;
 use PHPUnit\Framework\Assert as PHPUnit;
 use ReflectionFunction;
 
-class EventFake implements Dispatcher
+class EventFake implements Dispatcher, Fake
 {
-    use ReflectsClosures;
+    use ForwardsCalls, ReflectsClosures;
 
     /**
      * The original event dispatcher.
      *
      * @var \Illuminate\Contracts\Events\Dispatcher
      */
-    protected $dispatcher;
+    public $dispatcher;
 
     /**
      * The event types that should be intercepted instead of dispatched.
@@ -83,23 +87,28 @@ class EventFake implements Dispatcher
     {
         foreach ($this->dispatcher->getListeners($expectedEvent) as $listenerClosure) {
             $actualListener = (new ReflectionFunction($listenerClosure))
-                        ->getStaticVariables()['listener'];
+                ->getStaticVariables()['listener'];
+
+            $normalizedListener = $expectedListener;
 
             if (is_string($actualListener) && Str::contains($actualListener, '@')) {
                 $actualListener = Str::parseCallback($actualListener);
 
                 if (is_string($expectedListener)) {
                     if (Str::contains($expectedListener, '@')) {
-                        $expectedListener = Str::parseCallback($expectedListener);
+                        $normalizedListener = Str::parseCallback($expectedListener);
                     } else {
-                        $expectedListener = [$expectedListener, 'handle'];
+                        $normalizedListener = [
+                            $expectedListener,
+                            method_exists($expectedListener, 'handle') ? 'handle' : '__invoke',
+                        ];
                     }
                 }
             }
 
-            if ($actualListener === $expectedListener ||
+            if ($actualListener === $normalizedListener ||
                 ($actualListener instanceof Closure &&
-                $expectedListener === Closure::class)) {
+                $normalizedListener === Closure::class)) {
                 PHPUnit::assertTrue(true);
 
                 return;
@@ -184,9 +193,18 @@ class EventFake implements Dispatcher
     {
         $count = count(Arr::flatten($this->events));
 
+        $eventNames = (new Collection($this->events))
+            ->map(fn ($events, $eventName) => sprintf(
+                '%s dispatched %s %s',
+                $eventName,
+                count($events),
+                Str::plural('time', count($events)),
+            ))
+            ->join("\n- ");
+
         PHPUnit::assertSame(
             0, $count,
-            "{$count} unexpected events were dispatched."
+            "{$count} unexpected events were dispatched:\n\n- $eventNames\n"
         );
     }
 
@@ -200,12 +218,12 @@ class EventFake implements Dispatcher
     public function dispatched($event, $callback = null)
     {
         if (! $this->hasDispatched($event)) {
-            return collect();
+            return new Collection;
         }
 
         $callback = $callback ?: fn () => true;
 
-        return collect($this->events[$event])->filter(
+        return (new Collection($this->events[$event]))->filter(
             fn ($arguments) => $callback(...$arguments)
         );
     }
@@ -291,7 +309,7 @@ class EventFake implements Dispatcher
         $name = is_object($event) ? get_class($event) : (string) $event;
 
         if ($this->shouldFakeEvent($name, $payload)) {
-            $this->events[$name][] = func_get_args();
+            $this->fakeEvent($event, $name, func_get_args());
         } else {
             return $this->dispatcher->dispatch($event, $payload, $halt);
         }
@@ -314,13 +332,31 @@ class EventFake implements Dispatcher
             return true;
         }
 
-        return collect($this->eventsToFake)
+        return (new Collection($this->eventsToFake))
             ->filter(function ($event) use ($eventName, $payload) {
                 return $event instanceof Closure
                             ? $event($eventName, $payload)
                             : $event === $eventName;
             })
             ->isNotEmpty();
+    }
+
+    /**
+     * Push the event onto the fake events array immediately or after the next database transaction.
+     *
+     * @param  string|object  $event
+     * @param  string  $name
+     * @param  array  $arguments
+     * @return void
+     */
+    protected function fakeEvent($event, $name, $arguments)
+    {
+        if ($event instanceof ShouldDispatchAfterCommit && Container::getInstance()->bound('db.transactions')) {
+            return Container::getInstance()->make('db.transactions')
+                ->addCallback(fn () => $this->events[$name][] = $arguments);
+        }
+
+        $this->events[$name][] = $arguments;
     }
 
     /**
@@ -336,7 +372,7 @@ class EventFake implements Dispatcher
             return false;
         }
 
-        return collect($this->eventsToDispatch)
+        return (new Collection($this->eventsToDispatch))
             ->filter(function ($event) use ($eventName, $payload) {
                 return $event instanceof Closure
                     ? $event($eventName, $payload)
@@ -371,10 +407,32 @@ class EventFake implements Dispatcher
      *
      * @param  string|object  $event
      * @param  mixed  $payload
-     * @return array|null
+     * @return mixed
      */
     public function until($event, $payload = [])
     {
         return $this->dispatch($event, $payload, true);
+    }
+
+    /**
+     * Get the events that have been dispatched.
+     *
+     * @return array
+     */
+    public function dispatchedEvents()
+    {
+        return $this->events;
+    }
+
+    /**
+     * Handle dynamic method calls to the dispatcher.
+     *
+     * @param  string  $method
+     * @param  array  $parameters
+     * @return mixed
+     */
+    public function __call($method, $parameters)
+    {
+        return $this->forwardCallTo($this->dispatcher, $method, $parameters);
     }
 }

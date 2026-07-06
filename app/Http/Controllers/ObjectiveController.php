@@ -13,7 +13,7 @@ class ObjectiveController extends Controller
 
     {
         $services = service::all();
-        $objectives = Objective::paginate(5);
+        $objectives = Objective::with(['under_objectives'])->paginate(5);
         return view('pages.objective', compact('services', 'objectives'));
     }
 
@@ -21,15 +21,15 @@ class ObjectiveController extends Controller
 
     {
         $services = service::all();
-        $objectives = Objective::all();
-        $under_objectives = under_objective::all();
+        $objectives = Objective::with('under_objectives')->get();
+        $under_objectives = under_objective::with('objective')->get();
         return view('pages.under_objective', compact('services', 'objectives', 'under_objectives'));
     }
 
     public function ObjectiveStore(Request $request)
     {
         request()->validate([
-            'label' => 'required'
+            'label' => 'required|string|max:255|unique:objectives,label'
         ]);
         Objective::create([
             "role_id" => 3,
@@ -43,7 +43,8 @@ class ObjectiveController extends Controller
     public function UnderObjectiveStore(Request $request)
     {
         request()->validate([
-            'label' => 'required'
+            'objective_id' => 'required|exists:objectives,id',
+            'label' => 'required|string|max:255'
         ]);
         under_objective::create([
             "objective_id" => $request->objective_id,
