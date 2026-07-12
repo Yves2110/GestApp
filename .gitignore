@@ -1,0 +1,40 @@
+# ── Environnement & secrets ────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Dépendances ────────────────────────────────────────────
+/vendor/
+/node_modules/
+
+# ── Build Vite ─────────────────────────────────────────────
+/public/build/
+/public/hot
+
+# ── Cache & storage Laravel ────────────────────────────────
+/bootstrap/cache/
+/storage/*.key
+/storage/app/
+/storage/framework/cache/
+/storage/framework/sessions/
+/storage/framework/testing/
+/storage/framework/views/
+/storage/logs/
+
+# ── IDE & OS ───────────────────────────────────────────────
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# ── Tests ──────────────────────────────────────────────────
+/coverage/
+.phpunit.result.cache
+.phpunit.cache/
+
+# ── Divers ─────────────────────────────────────────────────
+*.log
+npm-debug.log*
+yarn-error.log*

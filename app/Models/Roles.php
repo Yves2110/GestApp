@@ -2,11 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
-class Roles extends Model
+/**
+ * @deprecated Utiliser App\Models\Role à la place.
+ * Conservé pour rétrocompatibilité uniquement.
+ */
+class Roles extends Role
 {
-    use HasFactory;
-    protected $fillable=['label'];
 }

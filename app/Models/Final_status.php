@@ -2,21 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
-class Final_status extends Model
+/**
+ * @deprecated Utiliser App\Models\FinalStatus à la place.
+ * Conservé pour rétrocompatibilité uniquement.
+ */
+class Final_status extends FinalStatus
 {
-    use HasFactory;
-    protected $fillable = [
-        'activity_id',
-        'label',
-        'market_number',
-
-    ];
-    
-    public function activity()
-    {
-        return $this->belongsTo(Activities::class);
-    }
 }

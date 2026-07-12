@@ -2,89 +2,90 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreObjectiveRequest;
+use App\Http\Requests\StoreUnderObjectiveRequest;
+use App\Http\Requests\UpdateObjectiveRequest;
 use App\Models\Objective;
-use App\Models\service;
-use App\Models\under_objective;
+use App\Models\Service;
+use App\Models\UnderObjective;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class ObjectiveController extends Controller
 {
     public function index()
-
     {
-        $services = service::all();
-        $objectives = Objective::with(['under_objectives'])->paginate(5);
+        $services = Service::all();
+        $objectives = Objective::with(['underObjectives'])->paginate(5);
         return view('pages.objective', compact('services', 'objectives'));
     }
 
     public function under_index()
-
     {
-        $services = service::all();
-        $objectives = Objective::with('under_objectives')->get();
-        $under_objectives = under_objective::with('objective')->get();
+        $services = Service::all();
+        $objectives = Objective::with('underObjectives')->get();
+        $under_objectives = UnderObjective::with('objective')->get();
         return view('pages.under_objective', compact('services', 'objectives', 'under_objectives'));
     }
 
-    public function ObjectiveStore(Request $request)
+    public function ObjectiveStore(StoreObjectiveRequest $request)
     {
-        request()->validate([
-            'label' => 'required|string|max:255|unique:objectives,label'
-        ]);
         Objective::create([
-            "role_id" => 3,
-            "label" => $request->label,
+            'role_id' => 3,
+            'label'   => $request->label,
         ]);
+        Cache::forget('objectives_tree');
 
         return back()->with('message', 'Enregistrement effectué avec succès!');
     }
 
-
-    public function UnderObjectiveStore(Request $request)
+    public function UnderObjectiveStore(StoreUnderObjectiveRequest $request)
     {
-        request()->validate([
-            'objective_id' => 'required|exists:objectives,id',
-            'label' => 'required|string|max:255'
+        UnderObjective::create([
+            'objective_id' => $request->objective_id,
+            'label'        => $request->label,
         ]);
-        under_objective::create([
-            "objective_id" => $request->objective_id,
-            "label" => $request->label,
-        ]);
+        Cache::forget('objectives_tree');
+        Cache::forget('under_objectives_all');
 
         return back()->with('message', 'Enregistrement effectué avec succès!');
     }
 
     public function destroy($id)
     {
-        $objective = Objective::find($id);
+        $objective = Objective::findOrFail($id);
         $objective->delete();
-        return back()->with('message', 'Suppression effectué avec succès!');
+        Cache::forget('objectives_tree');
+        Cache::forget('under_objectives_all');
+        return back()->with('message', 'Suppression effectuée avec succès!');
     }
 
     public function destroye($id)
     {
-        $under_objective = under_objective::find($id);
-        $under_objective->delete();
-        return back()->with('message', 'Suppression effectué avec succès!');
+        $underObjective = UnderObjective::findOrFail($id);
+        $underObjective->delete();
+        Cache::forget('objectives_tree');
+        Cache::forget('under_objectives_all');
+        return back()->with('message', 'Suppression effectuée avec succès!');
     }
 
     public function objectiveedit($id)
     {
-        $objective = Objective::find($id);
-        $services = service::all();
+        $objective = Objective::findOrFail($id);
+        $services = Service::all();
         return view('pages.editobjective', compact('objective', 'services'));
     }
 
-    public function objectiveupdate(Request $request, Objective $objective){
-        $objective=Objective::find($objective);
-        $request->validate([
-            'label'=> 'required',
-        ]);
+    public function objectiveupdate(UpdateObjectiveRequest $request, $id)
+    {
+        $objective = Objective::findOrFail($id);
         $objective->update([
-            'role_id'=>3,
-            'label'=> $request->label,
+            'role_id' => 3,
+            'label'   => $request->label,
         ]);
-        return redirect()->route('objective')
-        ->with('message', 'Modification effectué avec succès!');
+        Cache::forget('objectives_tree');
+        Cache::forget('under_objectives_all');
+        return redirect()->route('Objective')
+            ->with('message', 'Modification effectuée avec succès!');
     }
 }

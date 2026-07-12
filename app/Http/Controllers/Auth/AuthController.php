@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\role;
-use App\Models\service;
+use App\Models\Role;
+use App\Models\Service;
 use App\Notifications\Gestapp;
 use Attribute;
 use Illuminate\Support\Facades\Auth;
@@ -37,8 +37,8 @@ class AuthController extends Controller
 
     public function registration()
     {
-        $services=service::all();
-        $roles=role::where('id', '!=' ,'1')->get();
+        $services = Service::all();
+        $roles = Role::where('id', '!=', '1')->get();
         return view('auth.register', compact('services','roles'));
     }
     /**
@@ -55,6 +55,19 @@ class AuthController extends Controller
         ]);
         $credentials = $request->only('email', 'password');
         if (Auth::attempt($credentials)) {
+            // Empêche la connexion des comptes désactivés.
+            if (isset(Auth::user()->is_active) && ! Auth::user()->is_active) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+                return Redirect::back()->with('error', 'Votre compte a été désactivé. Contactez un administrateur.');
+            }
+
+            // Enregistre la date de dernière connexion.
+            \App\Models\User::where('id', Auth::id())->update(['last_login_at' => now()]);
+
+            \App\Support\AuditLogger::log('login', 'Connexion réussie', \App\Models\User::class, Auth::id());
+
             switch ((int) Auth::user()->role_id) {
                 case 1:
                     $request->session()->regenerate();
@@ -150,6 +163,7 @@ class AuthController extends Controller
 
     public function logout()
     {
+        \App\Support\AuditLogger::log('logout', 'Déconnexion', \App\Models\User::class, Auth::id());
         Session::flush();
         Auth::logout();
         return Redirect('home');

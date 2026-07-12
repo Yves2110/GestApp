@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\Activities;
+use App\Models\Activity;
 use App\Models\Objective;
-use App\Models\service;
-use Illuminate\Http\Request;
+use App\Models\Service;
+use App\Models\Periode;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -16,7 +16,7 @@ class ExportService
      */
     public function exportActivitiesCSV($filters = [])
     {
-        $query = Activities::with(['service', 'objective', 'under_objective', 'periode']);
+        $query = Activity::with(['service', 'objective', 'underObjective', 'periode']);
         
         // Appliquer les filtres
         if (!empty($filters['service_id'])) {
@@ -34,26 +34,35 @@ class ExportService
         if (!empty($filters['date_to'])) {
             $query->where('created_at', '<=', $filters['date_to']);
         }
-        
+
+        if (!empty($filters['workflow_status'])) {
+            $query->where('workflow_status', $filters['workflow_status']);
+        }
+
         $activities = $query->get();
-        
-        $csv = "ID,Libellé,Service,Objectif,Sous-Objectif,Période,Indicateur,Cible,Coût (€),Source de financement,Structure,Statut,Date de création\n";
-        
+
+        $wfLabels = Activity::WORKFLOW_LABELS;
+
+        $csv = "ID,Libellé,Service,Objectif,Sous-Objectif,Période,Indicateur,Cible,Coût (FCFA),Source de financement,Structure,Statut,Workflow,Soumis le,Validé le,Date de création\n";
+
         foreach ($activities as $activity) {
             $csv .= sprintf(
-                "%d,\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",%.2f,\"%s\",\"%s\",\"%s\",\"%s\"\n",
+                "%d,\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",%s,\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\n",
                 $activity->id,
-                $activity->label,
-                $activity->service->service ?? 'N/A',
-                $activity->objective->label ?? 'N/A',
-                $activity->under_objective->label ?? 'N/A',
-                $activity->periode->label ?? 'N/A',
-                $activity->indicator,
-                $activity->target,
-                $activity->price,
-                $activity->source_of_funding,
-                $activity->structure,
-                $activity->status ? 'Active' : 'En attente',
+                str_replace('"', '""', $activity->label),
+                str_replace('"', '""', $activity->service->label ?? 'N/A'),
+                str_replace('"', '""', $activity->objective->label ?? 'N/A'),
+                str_replace('"', '""', $activity->underObjective->label ?? 'N/A'),
+                str_replace('"', '""', $activity->periode->label ?? 'N/A'),
+                str_replace('"', '""', $activity->indicator ?? ''),
+                str_replace('"', '""', $activity->target ?? ''),
+                number_format($activity->price ?? 0, 2, '.', ''),
+                str_replace('"', '""', $activity->source_of_funding ?? ''),
+                str_replace('"', '""', $activity->structure ?? ''),
+                $activity->status ? 'Active' : 'Inactive',
+                $wfLabels[$activity->workflow_status] ?? $activity->workflow_status,
+                $activity->submitted_at?->format('d/m/Y H:i') ?? '',
+                $activity->validated_at?->format('d/m/Y H:i') ?? '',
                 $activity->created_at->format('d/m/Y H:i')
             );
         }
@@ -66,7 +75,7 @@ class ExportService
      */
     public function generateActivitiesReport($filters = [])
     {
-        $query = Activities::with(['service', 'objective', 'under_objective', 'periode']);
+        $query = Activity::with(['service', 'objective', 'underObjective', 'periode']);
         
         // Appliquer les filtres
         if (!empty($filters['service_id'])) {
@@ -139,17 +148,17 @@ class ExportService
                 'with_activities' => Objective::has('activities')->count(),
             ],
             'activities' => [
-                'total' => Activities::count(),
-                'active' => Activities::where('status', 1)->count(),
-                'pending' => Activities::where('status', 0)->count(),
-                'total_budget' => Activities::sum('price'),
-                'avg_budget' => Activities::avg('price'),
+                'total' => Activity::count(),
+                'active' => Activity::where('status', 1)->count(),
+                'pending' => Activity::where('status', 0)->count(),
+                'total_budget' => Activity::sum('price'),
+                'avg_budget' => Activity::avg('price'),
             ],
             'services' => [
-                'total' => service::count(),
-                'with_activities' => service::has('activities')->count(),
+                'total' => Service::count(),
+                'with_activities' => Service::has('activities')->count(),
             ],
-            'by_service' => service::withCount('activities')
+            'by_service' => Service::withCount('activities')
                 ->withSum('activities', 'price')
                 ->orderBy('activities_count', 'desc')
                 ->get()
@@ -177,15 +186,18 @@ class ExportService
         $endDate = Carbon::now();
         
         // Évolution mensuelle
-        $monthlyEvolution = Activities::selectRaw('
-                DATE_FORMAT(created_at, "%Y-%m") as month,
-                YEAR(created_at) as year,
-                MONTH(created_at) as month_num,
+        $driver = DB::getDriverName();
+        $monthExpr = $driver === 'sqlite'
+            ? "strftime('%Y-%m', created_at) as month, strftime('%Y', created_at) as year, strftime('%m', created_at) as month_num"
+            : "DATE_FORMAT(created_at, '%Y-%m') as month, YEAR(created_at) as year, MONTH(created_at) as month_num";
+
+        $monthlyEvolution = Activity::selectRaw("
+                {$monthExpr},
                 COUNT(*) as activities_count,
-                SUM(price) as total_budget,
-                AVG(price) as avg_budget,
+                COALESCE(SUM(price),0) as total_budget,
+                COALESCE(AVG(price),0) as avg_budget,
                 SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) as active_count
-            ')
+            ")
             ->where('created_at', '>=', $startDate)
             ->groupBy('month', 'year', 'month_num')
             ->orderBy('year')
@@ -193,9 +205,9 @@ class ExportService
             ->get();
         
         // Performance par service
-        $servicePerformance = service::selectRaw('
+        $servicePerformance = Service::selectRaw('
                 services.id,
-                services.service,
+                services.label as service,
                 COUNT(activities.id) as total_activities,
                 SUM(activities.price) as total_budget,
                 AVG(activities.price) as avg_budget,
@@ -204,7 +216,7 @@ class ExportService
             ')
             ->leftJoin('activities', 'services.id', '=', 'activities.service_id')
             ->where('activities.created_at', '>=', $startDate)
-            ->groupBy('services.id', 'services.service')
+            ->groupBy('services.id', 'services.label')
             ->orderBy('total_activities', 'desc')
             ->get();
         
@@ -213,11 +225,11 @@ class ExportService
             'period_months' => $months,
             'start_date' => $startDate->format('d/m/Y'),
             'end_date' => $endDate->format('d/m/Y'),
-            'total_activities' => Activities::where('created_at', '>=', $startDate)->count(),
-            'total_budget' => Activities::where('created_at', '>=', $startDate)->sum('price'),
-            'completion_rate' => Activities::where('created_at', '>=', $startDate)
-                ->where('status', 1)->count() / 
-                max(Activities::where('created_at', '>=', $startDate)->count(), 1) * 100,
+            'total_activities' => Activity::where('created_at', '>=', $startDate)->count(),
+            'total_budget' => Activity::where('created_at', '>=', $startDate)->sum('price'),
+            'completion_rate' => Activity::where('created_at', '>=', $startDate)
+                ->where('status', 1)->count() /
+                max(Activity::where('created_at', '>=', $startDate)->count(), 1) * 100,
             'avg_monthly_activities' => $monthlyEvolution->avg('activities_count'),
             'budget_growth' => $this->calculateBudgetGrowth($startDate, $endDate),
         ];
@@ -235,8 +247,8 @@ class ExportService
      */
     private function calculateBudgetGrowth($startDate, $endDate)
     {
-        $currentPeriod = Activities::whereBetween('created_at', [$startDate, $endDate])->sum('price');
-        $previousPeriod = Activities::whereBetween('created_at', [
+        $currentPeriod = Activity::whereBetween('created_at', [$startDate, $endDate])->sum('price');
+        $previousPeriod = Activity::whereBetween('created_at', [
             $startDate->copy()->subMonths($endDate->diffInMonths($startDate)),
             $startDate
         ])->sum('price');

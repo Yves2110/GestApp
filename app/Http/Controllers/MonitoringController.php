@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use App\Models\Activities;
+use App\Models\Activity;
 use App\Models\User;
 use Carbon\Carbon;
 
@@ -164,11 +164,11 @@ class MonitoringController extends Controller
                     ->toArray(),
             ],
             'activities' => [
-                'total' => Activities::count(),
-                'created_today' => Activities::whereDate('created_at', today())->count(),
-                'created_this_week' => Activities::where('created_at', '>=', now()->subDays(7))->count(),
-                'active' => Activities::where('status', 1)->count(),
-                'pending' => Activities::where('status', 0)->count(),
+                'total' => Activity::count(),
+                'created_today' => Activity::whereDate('created_at', today())->count(),
+                'created_this_week' => Activity::where('created_at', '>=', now()->subDays(7))->count(),
+                'active' => Activity::where('status', 1)->count(),
+                'pending' => Activity::where('status', 0)->count(),
             ],
             'performance' => [
                 'response_time_avg' => $this->getAverageResponseTime(),

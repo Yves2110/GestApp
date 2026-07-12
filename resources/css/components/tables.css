@@ -1,0 +1,150 @@
+/* =============================================================================
+   GestApp — Tables
+   ============================================================================= */
+
+.table-wrapper {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.table-toolbar {
+    padding: var(--space-4) var(--space-6);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+}
+
+.table-toolbar-title {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semi);
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.table {
+    width: 100%;
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--text-primary);
+}
+
+.table thead th {
+    background-color: var(--clr-gray-50);
+    color: var(--text-secondary);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semi);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--border-color);
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.table thead th.sortable {
+    cursor: pointer;
+    user-select: none;
+}
+.table thead th.sortable:hover { background-color: var(--clr-gray-100); }
+.table thead th.sortable::after {
+    content: '\F282';
+    font-family: 'bootstrap-icons';
+    margin-left: var(--space-1);
+    opacity: 0.4;
+    font-size: 0.75em;
+}
+.table thead th.sort-asc::after  { content: '\F235'; opacity: 1; color: var(--clr-primary); }
+.table thead th.sort-desc::after { content: '\F229'; opacity: 1; color: var(--clr-primary); }
+
+.table tbody tr {
+    transition: background-color var(--transition-fast);
+    border-bottom: 1px solid var(--border-color);
+}
+.table tbody tr:last-child { border-bottom: none; }
+.table tbody tr:hover { background-color: var(--clr-gray-50); }
+
+.table tbody td {
+    padding: var(--space-3) var(--space-4);
+    vertical-align: middle;
+    color: var(--text-primary);
+}
+
+/* Column types */
+.col-check  { width: 40px; text-align: center; }
+.col-id     { width: 60px; font-weight: var(--font-weight-medium); color: var(--text-secondary); }
+.col-actions { width: 100px; text-align: right; white-space: nowrap; }
+
+/* Empty state inside table */
+.table-empty {
+    padding: var(--space-16) var(--space-8);
+    text-align: center;
+    color: var(--text-muted);
+}
+.table-empty i {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: var(--space-4);
+    opacity: 0.4;
+}
+
+/* Pagination */
+.pagination-wrapper {
+    padding: var(--space-4) var(--space-6);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    background: var(--clr-gray-50);
+}
+
+.pagination-info {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+.pagination {
+    display: flex;
+    gap: var(--space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.page-item .page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2rem;
+    height: 2rem;
+    padding: 0 var(--space-2);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-secondary);
+    background: var(--bg-card);
+    transition: all var(--transition-fast);
+    text-decoration: none;
+}
+.page-item .page-link:hover {
+    background-color: var(--clr-gray-100);
+    color: var(--text-primary);
+    border-color: var(--clr-gray-300);
+}
+.page-item.active .page-link {
+    background-color: var(--clr-primary);
+    border-color: var(--clr-primary);
+    color: var(--clr-white);
+}
+.page-item.disabled .page-link {
+    opacity: 0.4;
+    pointer-events: none;
+}

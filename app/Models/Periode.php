@@ -13,8 +13,8 @@ class Periode extends Model
         'label',
     ];
 
-    public function activity()
+    public function activities()
     {
-        return $this->hasMany(Activities::class);
+        return $this->hasMany(Activity::class);
     }
 }

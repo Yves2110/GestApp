@@ -1,202 +1,246 @@
 @extends('layouts.app')
 
-@section('title', 'Gestion des Activités - GestApp')
+@section('title', 'Activités')
+
+@section('breadcrumb')
+    <li class="breadcrumb-item active">Activités</li>
+@endsection
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="page-header">
     <div>
-        <h2 class="h3 mb-1">
-            <i class="bi bi-activity text-university-primary me-2"></i>
-            Gestion des Activités
-        </h2>
-        <p class="text-muted mb-0">Suivi et gestion des activités universitaires</p>
+        <h1 class="page-title">Activités</h1>
+        <p class="page-subtitle">{{ $activities->total() }} activité{{ $activities->total() > 1 ? 's' : '' }} au total</p>
     </div>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#activityModal">
-        <i class="bi bi-plus-circle me-2"></i>
-        Nouvelle Activité
-    </button>
+    <div class="page-actions">
+        <a href="{{ route('activites.kanban') }}" class="btn btn-ghost btn-sm" title="Vue Kanban">
+            <i class="bi bi-kanban"></i>
+            <span class="hide-mobile">Kanban</span>
+        </a>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#activityModal">
+            <i class="bi bi-plus-lg"></i>
+            Nouvelle activité
+        </button>
+    </div>
 </div>
 
-<!-- Flash Messages -->
-@if (session()->has('message'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        <i class="bi bi-check-circle-fill me-2"></i>
-        {{ session()->get('message') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-    </div>
-@endif
-
-<!-- Activities Table - Optimized Space -->
-<div class="card">
-    <div class="card-header">
-        <div class="row align-items-center g-3">
-            <div class="col-md-6 col-lg-7">
-                <h5 class="card-title mb-0">
-                    <i class="bi bi-list-ul me-2"></i>
-                    Liste des Activités
-                </h5>
-            </div>
-            <div class="col-md-6 col-lg-5 text-md-end">
-                <div class="d-flex gap-2 justify-content-md-end flex-wrap">
-                    <button class="btn btn-outline-secondary btn-sm flex-fill flex-md-grow-0" onclick="window.print()">
-                        <i class="bi bi-printer me-1 d-none d-sm-inline"></i>
-                        <span class="d-sm-none d-inline"><i class="bi bi-printer"></i></span>
-                        <span class="d-none d-sm-inline">Imprimer</span>
-                    </button>
-                    <button class="btn btn-outline-success btn-sm flex-fill flex-md-grow-0" onclick="exportToExcel()">
-                        <i class="bi bi-file-earmark-excel me-1 d-none d-sm-inline"></i>
-                        <span class="d-sm-none d-inline"><i class="bi bi-file-earmark-excel"></i></span>
-                        <span class="d-none d-sm-inline">Exporter</span>
-                    </button>
+{{-- ====== FILTRES ====== --}}
+<div class="card mb-4">
+    <div class="card-body py-3">
+        <form method="GET" action="{{ route('Activites') }}" class="row g-3 align-items-end">
+            {{-- Recherche --}}
+            <div class="col-12 col-sm-6 col-lg-3">
+                <label class="form-label">Rechercher</label>
+                <div class="search-input-wrapper">
+                    <i class="bi bi-search"></i>
+                    <input type="text" name="search" class="form-control form-control-sm"
+                           placeholder="Libellé…"
+                           value="{{ $filters['search'] ?? '' }}">
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="card-body p-2 p-md-3">
-        @if($activities->count() > 0)
-            <div class="table-responsive">
-                <table class="table table-hover table-sm" id="activitiesTable">
-                    <thead>
-                        <tr>
-                            <th class="d-none d-md-table-cell"><i class="bi bi-hash me-1"></i>ID</th>
-                            <th><i class="bi bi-tag me-1"></i>Libellé</th>
-                            <th class="d-none d-lg-table-cell"><i class="bi bi-building me-1"></i>Service</th>
-                            <th class="d-none d-xl-table-cell"><i class="bi bi-bullseye me-1"></i>Objectif</th>
-                            <th class="d-none d-xl-table-cell"><i class="bi bi-diagram-3 me-1"></i>Sous-Objectif</th>
-                            <th class="d-none d-lg-table-cell"><i class="bi bi-calendar3 me-1"></i>Période</th>
-                            <th><i class="bi bi-currency-euro me-1"></i>Coût</th>
-                            <th class="d-none d-md-table-cell"><i class="bi bi-flag me-1"></i>Statut</th>
-                            <th><i class="bi bi-gear me-1"></i>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($activities as $activity)
-                            <tr>
-                                <td class="d-none d-md-table-cell"><span class="badge bg-light text-dark small">#{{ $activity->id }}</span></td>
-                                <td>
-                                    <div class="d-flex flex-column">
-                                        <strong class="text-truncate" style="max-width: 150px;" title="{{ $activity->label }}">
-                                            {{ Str::limit($activity->label, 30) }}
-                                        </strong>
-                                        @if($activity->commentary)
-                                            <small class="text-muted d-none d-lg-block">{{ Str::limit($activity->commentary, 50) }}</small>
-                                        @endif
-                                        <small class="text-muted d-lg-none d-block">
-                                            {{ $activity->service->service ?? 'N/A' }}
-                                        </small>
-                                    </div>
-                                </td>
-                                <td class="d-none d-lg-table-cell">
-                                    <span class="badge bg-university-secondary text-white small">
-                                        {{ Str::limit($activity->service->service ?? 'N/A', 15) }}
-                                    </span>
-                                </td>
-                                <td class="d-none d-xl-table-cell">
-                                    <small class="text-truncate d-block" style="max-width: 120px;" title="{{ $activity->objective->label ?? 'N/A' }}">
-                                        {{ Str::limit($activity->objective->label ?? 'N/A', 20) }}
-                                    </small>
-                                </td>
-                                <td class="d-none d-xl-table-cell">
-                                    <small class="text-truncate d-block" style="max-width: 120px;" title="{{ $activity->under_objective->label ?? 'N/A' }}">
-                                        {{ Str::limit($activity->under_objective->label ?? 'N/A', 20) }}
-                                    </small>
-                                </td>
-                                <td class="d-none d-lg-table-cell">
-                                    <small class="text-truncate d-block" style="max-width: 100px;" title="{{ $activity->periode->label ?? 'N/A' }}">
-                                        {{ Str::limit($activity->periode->label ?? 'N/A', 15) }}
-                                    </small>
-                                </td>
-                                <td>
-                                    <strong class="small">{{ number_format($activity->price, 0, ',', ' ') }} €</strong>
-                                </td>
-                                <td class="d-none d-md-table-cell">
-                                    @if($activity->status)
-                                        <span class="badge bg-success small">
-                                            <i class="bi bi-check-circle me-1"></i>Active
-                                        </span>
-                                    @else
-                                        <span class="badge bg-warning small">
-                                            <i class="bi bi-clock me-1"></i>En attente
-                                        </span>
-                                    @endif
-                                </td>
-                                <td>
-                                    <div class="btn-group btn-group-sm" role="group">
-                                        <button type="button" class="btn btn-outline-primary btn-sm" 
-                                                data-bs-toggle="tooltip" title="Voir les détails"
-                                                onclick="viewActivity({{ $activity->id }})">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-outline-warning btn-sm d-none d-lg-table-cell" 
-                                                data-bs-toggle="tooltip" title="Modifier"
-                                                onclick="editActivity({{ $activity->id }})">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-outline-danger btn-sm d-none d-xl-table-cell" 
-                                                data-bs-toggle="tooltip" title="Supprimer"
-                                                onclick="deleteActivity({{ $activity->id }})">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                        <!-- Mobile action dropdown -->
-                                        <div class="dropdown d-lg-none d-xl-none">
-                                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                                <i class="bi bi-three-dots"></i>
-                                            </button>
-                                            <ul class="dropdown-menu dropdown-menu-end">
-                                                <li>
-                                                    <a class="dropdown-item small" href="#" onclick="editActivity({{ $activity->id }})">
-                                                        <i class="bi bi-pencil me-2"></i>Modifier
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item small text-danger" href="#" onclick="deleteActivity({{ $activity->id }})">
-                                                        <i class="bi bi-trash me-2"></i>Supprimer
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+
+            {{-- Service (admin+ uniquement) --}}
+            @if(Auth::user()->role_id < 4)
+            <div class="col-12 col-sm-6 col-lg-2">
+                <label class="form-label">Service</label>
+                <select name="service_id" class="form-select form-select-sm">
+                    <option value="">Tous</option>
+                    @foreach($services as $s)
+                        <option value="{{ $s->id }}"
+                            {{ ($filters['service_id'] ?? '') == $s->id ? 'selected' : '' }}>
+                            {{ $s->label }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
-            
-            <!-- Pagination -->
-            <div class="d-flex justify-content-between align-items-center mt-3">
-                <small class="text-muted">
-                    Affichage de {{ $activities->firstItem() }} à {{ $activities->lastItem() }} 
-                    sur {{ $activities->total() }} activités
-                </small>
-                {{ $activities->links() }}
+            @endif
+
+            {{-- Workflow status --}}
+            <div class="col-12 col-sm-6 col-lg-2">
+                <label class="form-label">Statut workflow</label>
+                <select name="workflow_status" class="form-select form-select-sm">
+                    <option value="">Tous</option>
+                    @foreach(\App\Models\Activity::WORKFLOW_LABELS as $val => $lbl)
+                        <option value="{{ $val }}"
+                            {{ ($filters['workflow_status'] ?? '') === $val ? 'selected' : '' }}>
+                            {{ $lbl }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
-        @else
-            <div class="text-center py-5">
-                <i class="bi bi-inbox text-muted" style="font-size: 4rem;"></i>
-                <h5 class="mt-3 text-muted">Aucune activité trouvée</h5>
-                <p class="text-muted">Commencez par créer votre première activité</p>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#activityModal">
-                    <i class="bi bi-plus-circle me-2"></i>
-                    Créer une activité
+
+            {{-- Période --}}
+            <div class="col-12 col-sm-6 col-lg-2">
+                <label class="form-label">Période</label>
+                <select name="periode_id" class="form-select form-select-sm">
+                    <option value="">Toutes</option>
+                    @foreach($trimestres as $t)
+                        <option value="{{ $t->id }}"
+                            {{ ($filters['periode_id'] ?? '') == $t->id ? 'selected' : '' }}>
+                            {{ $t->label }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            {{-- Actions --}}
+            <div class="col-12 col-lg-auto d-flex gap-2">
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <i class="bi bi-funnel"></i> Filtrer
                 </button>
+                @if(array_filter($filters ?? []))
+                    <a href="{{ route('Activites') }}" class="btn btn-ghost btn-sm">
+                        <i class="bi bi-x-lg"></i> Réinitialiser
+                    </a>
+                @endif
             </div>
-        @endif
+        </form>
     </div>
 </div>
 
-<!-- Activity Modal -->
-<div class="modal fade" id="activityModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+{{-- ====== TABLE ====== --}}
+<div class="table-wrapper">
+    <div class="table-toolbar">
+        <h5 class="table-toolbar-title">
+            <i class="bi bi-list-ul me-2 text-muted"></i>Liste des activités
+        </h5>
+        <div class="d-flex gap-2">
+            <button class="btn btn-ghost btn-sm no-print" onclick="window.print()" title="Imprimer">
+                <i class="bi bi-printer"></i>
+                <span class="hide-mobile">Imprimer</span>
+            </button>
+            @if(Auth::user()->role_id <= 3)
+            <a href="{{ route('export.config') }}" class="btn btn-ghost btn-sm" title="Exporter">
+                <i class="bi bi-download"></i>
+                <span class="hide-mobile">Exporter</span>
+            </a>
+            @endif
+        </div>
+    </div>
+
+    @if($activities->count() > 0)
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="col-id">#</th>
+                    <th>Libellé</th>
+                    <th class="hide-mobile">Service</th>
+                    <th class="hide-mobile">Période</th>
+                    <th>Statut</th>
+                    <th>Workflow</th>
+                    <th class="hide-mobile" style="text-align:right;">Budget</th>
+                    <th class="col-actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($activities as $activity)
+                @php
+                    $wfClass = match($activity->workflow_status) {
+                        'draft'     => 'badge-status--draft',
+                        'pending'   => 'badge-status--pending',
+                        'validated' => 'badge-status--active',
+                        'rejected'  => 'badge-status--rejected',
+                        default     => 'badge-secondary',
+                    };
+                @endphp
+                <tr>
+                    <td class="col-id">{{ $activity->id }}</td>
+                    <td>
+                        <div class="fw-medium text-sm">
+                            <a href="{{ route('activites.show', $activity->id) }}" class="text-primary">
+                                {{ \Illuminate\Support\Str::limit($activity->label, 55) }}
+                            </a>
+                        </div>
+                        @if($activity->objective)
+                            <div class="text-xs text-muted hide-mobile">{{ \Illuminate\Support\Str::limit($activity->objective->label, 40) }}</div>
+                        @endif
+                    </td>
+                    <td class="hide-mobile">
+                        <span class="badge badge-secondary">{{ $activity->service->label ?? '—' }}</span>
+                    </td>
+                    <td class="hide-mobile">
+                        <span class="text-sm text-muted">{{ $activity->periode->label ?? '—' }}</span>
+                    </td>
+                    <td>
+                        @if($activity->status)
+                            <span class="badge badge-success"><i class="bi bi-check-circle me-1"></i>Active</span>
+                        @else
+                            <span class="badge badge-warning"><i class="bi bi-hourglass me-1"></i>Inactif</span>
+                        @endif
+                    </td>
+                    <td>
+                        <span class="badge badge-status {{ $wfClass }}">{{ $activity->workflowLabel }}</span>
+                    </td>
+                    <td class="hide-mobile" style="text-align:right;">
+                        <span class="text-sm fw-medium">{{ $activity->price ? number_format($activity->price, 0, ',', ' ') . ' FCFA' : '—' }}</span>
+                    </td>
+                    <td class="col-actions">
+                        <div class="d-flex gap-1 justify-content-end">
+                            <a href="{{ route('activites.show', $activity->id) }}"
+                               class="btn btn-ghost btn-icon btn-sm" title="Voir">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{{ route('activites.edit', $activity->id) }}"
+                               class="btn btn-ghost btn-icon btn-sm" title="Modifier">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <button type="button"
+                                    class="btn btn-ghost btn-icon btn-sm text-danger"
+                                    title="Supprimer"
+                                    onclick="openDeleteModal({{ $activity->id }}, @js($activity->label))">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                        <form id="delete-activity-{{ $activity->id }}"
+                              action="{{ route('activites.destroy', $activity->id) }}"
+                              method="POST" class="d-none">
+                            @csrf @method('DELETE')
+                        </form>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+
+    {{-- Pagination --}}
+    <div class="pagination-wrapper">
+        <span class="pagination-info">
+            Affichage de <strong>{{ $activities->firstItem() }}</strong>
+            à <strong>{{ $activities->lastItem() }}</strong>
+            sur <strong>{{ $activities->total() }}</strong> activités
+        </span>
+        {{ $activities->links('vendor.pagination.custom') }}
+    </div>
+
+    @else
+    <x-empty-state
+        icon="bi-lightning-charge"
+        title="Aucune activité trouvée"
+        :message="array_filter($filters ?? []) ? 'Essayez de modifier vos filtres.' : 'Créez votre première activité.'"
+    >
+        <x-slot:action>
+            <button type="button" class="btn btn-primary btn-sm"
+                    data-bs-toggle="modal" data-bs-target="#activityModal">
+                <i class="bi bi-plus-lg"></i> Nouvelle activité
+            </button>
+        </x-slot:action>
+    </x-empty-state>
+    @endif
+</div>
+
+{{-- ====== MODAL CRÉATION ACTIVITÉ ====== --}}
+<div class="modal fade" id="activityModal" tabindex="-1" aria-labelledby="activityModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">
-                    <i class="bi bi-plus-circle text-university-primary me-2"></i>
-                    Ajouter une Activité
+                <h5 class="modal-title" id="activityModalLabel">
+                    <i class="bi bi-plus-lg me-2"></i>Nouvelle activité
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
             </div>
-            <form action="{{ route('ActivitiesStore') }}" method="post">
+            <form action="{{ route('ActivitiesStore') }}" method="POST">
                 @csrf
                 <div class="modal-body">
                     <div class="row g-3">
@@ -226,12 +270,23 @@
                             <label for="service_id" class="form-label">
                                 <i class="bi bi-building me-1"></i>Service *
                             </label>
-                            <select class="form-select" name="service_id" required>
-                                <option value="" selected disabled>Choisir un service</option>
-                                @foreach ($services as $service)
-                                    <option value="{{ $service->id }}">{{ $service->service }}</option>
-                                @endforeach
-                            </select>
+                            @if (auth()->check() && (int) auth()->user()->role_id === 4)
+                                {{-- Utilisateur Service : verrouillé sur son propre service --}}
+                                <select class="form-select" disabled>
+                                    @foreach ($services as $service)
+                                        <option value="{{ $service->id }}" selected>{{ $service->label }}</option>
+                                    @endforeach
+                                </select>
+                                <input type="hidden" name="service_id" value="{{ auth()->user()->service_id }}">
+                                <span class="form-text">Vous ne pouvez gérer que les activités de votre service.</span>
+                            @else
+                                <select class="form-select" name="service_id" required>
+                                    <option value="" selected disabled>Choisir un service</option>
+                                    @foreach ($services as $service)
+                                        <option value="{{ $service->id }}">{{ $service->label }}</option>
+                                    @endforeach
+                                </select>
+                            @endif
                         </div>
                         <div class="col-md-6">
                             <label for="periode_id" class="form-label">
@@ -296,13 +351,9 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="bi bi-x-circle me-1"></i>
-                        Annuler
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-check-circle me-1"></i>
-                        Enregistrer l'activité
+                    <button type="button" class="btn btn-ghost btn-sm" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <i class="bi bi-check-lg me-1"></i>Enregistrer
                     </button>
                 </div>
             </form>
@@ -310,58 +361,61 @@
     </div>
 </div>
 
-@section('scripts')
+{{-- ====== MODAL SUPPRESSION ====== --}}
+<div class="modal fade modal-confirm" id="deleteActivityModal" tabindex="-1"
+     aria-labelledby="deleteActivityModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteActivityModalLabel">
+                    <i class="bi bi-exclamation-triangle-fill me-2 text-danger"></i>Confirmer la suppression
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-2 text-sm">Vous allez supprimer définitivement :</p>
+                <p class="fw-semi text-danger mb-3" id="deleteActivityLabel"></p>
+                <p class="text-muted text-sm mb-3">Saisissez <code>SUPPRIMER</code> pour confirmer.</p>
+                <input type="text" class="form-control" id="deleteConfirmInput"
+                       placeholder="SUPPRIMER" autocomplete="off">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-ghost btn-sm" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-danger btn-sm" id="confirmDeleteBtn" disabled>
+                    <i class="bi bi-trash me-1"></i>Supprimer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
 <script>
-// Initialize tooltips
-var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl)
-});
+let _deleteId = null;
 
-// View activity details
-function viewActivity(id) {
-    // Implementation for viewing activity details
-    console.log('View activity:', id);
+function openDeleteModal(id, label) {
+    _deleteId = id;
+    document.getElementById('deleteActivityLabel').textContent = label || ('Activité #' + id);
+    const inp = document.getElementById('deleteConfirmInput');
+    const btn = document.getElementById('confirmDeleteBtn');
+    inp.value = '';
+    btn.disabled = true;
+    new bootstrap.Modal(document.getElementById('deleteActivityModal')).show();
 }
 
-// Edit activity
-function editActivity(id) {
-    // Implementation for editing activity
-    console.log('Edit activity:', id);
-}
-
-// Delete activity
-function deleteActivity(id) {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cette activité ?')) {
-        // Implementation for deleting activity
-        console.log('Delete activity:', id);
-    }
-}
-
-// Export to Excel
-function exportToExcel() {
-    // Implementation for Excel export
-    console.log('Export to Excel');
-}
-
-// Initialize DataTable for better table management
-$(document).ready(function() {
-    $('#activitiesTable').DataTable({
-        "language": {
-            "search": "Rechercher:",
-            "lengthMenu": "Afficher _MENU_ entrées",
-            "info": "Affichage de _START_ à _END_ sur _TOTAL_ entrées",
-            "paginate": {
-                "first": "Premier",
-                "last": "Dernier",
-                "next": "Suivant",
-                "previous": "Précédent"
-            }
-        },
-        "pageLength": 10,
-        "responsive": true
+document.addEventListener('DOMContentLoaded', () => {
+    const inp = document.getElementById('deleteConfirmInput');
+    const btn = document.getElementById('confirmDeleteBtn');
+    if (!inp) return;
+    inp.addEventListener('input', () => {
+        btn.disabled = inp.value.trim().toUpperCase() !== 'SUPPRIMER';
+    });
+    btn.addEventListener('click', () => {
+        if (_deleteId === null) return;
+        const form = document.getElementById('delete-activity-' + _deleteId);
+        if (form) form.submit();
     });
 });
 </script>
-@endsection
+@endpush
 @endsection

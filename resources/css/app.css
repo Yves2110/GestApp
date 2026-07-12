@@ -1,0 +1,27 @@
+/* GestApp University 3.0 — Point d'entrée CSS */
+
+/* 1. Tokens (variables CSS) */
+@import './tokens.css';
+
+/* 2. Base */
+@import './base.css';
+
+/* 3. Utilities */
+@import './utilities.css';
+
+/* 4. Composants */
+@import './components/buttons.css';
+@import './components/forms.css';
+@import './components/cards.css';
+@import './components/tables.css';
+@import './components/badges.css';
+@import './components/modals.css';
+@import './components/sidebar.css';
+@import './components/header.css';
+@import './components/notifications.css';
+@import './components/kanban.css';
+@import './components/search.css';
+
+/* 5. Layouts */
+@import './layouts/app.css';
+@import './layouts/auth.css';

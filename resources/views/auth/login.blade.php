@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>login</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Connexion - GestApp</title>
+    <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/icon-uo.png') }}">
+    <link rel="stylesheet" href="{{ asset('assets/vendor/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/vendor/bootstrap-icons/bootstrap-icons.css') }}">
+
 </head>
 
 <body>
@@ -97,58 +97,59 @@
             margin-top: 10px
         }
     </style>
-    <div class="container">
-        <div class="row g-0 mt-5 mb-5 height-100">
-            <div class="alert m-0">
-                @if (Session::get('error'))
-                    <div class="alert alert-danger fs-2">
-                        {{ Session::get('error') }}
+
+    @if (Session::get('error'))
+        <div class="container mt-3">
+            <div class="alert alert-danger">{{ Session::get('error') }}</div>
+        </div>
+    @endif
+
+    <div class="container min-vh-100 d-flex align-items-center justify-content-center py-4">
+        <div class="row justify-content-center w-100">
+            <div class="col-md-6 col-lg-5">
+                <div class="bg-white rounded p-4 shadow">
+                    <div class="text-center mb-4">
+                        <img src="{{ asset('assets/img/icon-uo.png') }}" alt="GestApp" width="120" class="mb-3">
+                        <h1 class="main-heading mb-0">Connexion</h1>
                     </div>
-                @endif
-            </div>
 
-            <div class="m-auto col-md-6">
-                <div class="bg-white p-4 h-100">
-                    <div class="p-3 d-flex justify-content-center flex-column align-items-center"> <span
-                            class="main-heading">Connexion</span>
-                        <form action="{{ route('login.post') }}" method="post">
-                            @csrf
-                            <ul class="social-list mt-3 ">
-                                <img src="{{ asset('assets/img/icon-uo.png') }}" alt="" width="200px">
-                            </ul>
-                            <div class="form-data fw-bold"> <label>Email</label>
-                                <input type="email" placeholder="Email" class="form-control w-100 @error('email') is-invalid @enderror"
-                                    name="email" value="{{ old('email') }}" required autocomplete="email">
+                    <form action="{{ route('login.post') }}" method="post">
+                        @csrf
 
-                                @if ($errors->has('email'))
-                                    <span class="text-danger">{{ $errors->first('email') }}</span>
-                                @endif
-                            </div>
-                            <div class="form-data  fw-bold"> <label>Mot de passe</label>
-                                <input type="password" placeholder="Mot de passe"
-                                    class="form-control w-100 @error('password') is-invalid @enderror" name="password"
-                                    required autocomplete="current-password">
+                        <div class="form-data fw-bold">
+                            <label for="email">Email</label>
+                            <input id="email" type="email" placeholder="Email"
+                                   class="form-control w-100 @error('email') is-invalid @enderror"
+                                   name="email" value="{{ old('email') }}" required autocomplete="email">
+                            @error('email')
+                                <span class="invalid-feedback d-block">{{ $message }}</span>
+                            @enderror
+                        </div>
 
-                                @if ($errors->has('password'))
-                                    <span class="text-danger">{{ $errors->first('password') }}</span>
-                                @endif
-                            </div>
-                            <div class="d-flex justify-content-between w-100 align-items-center">
+                        <div class="form-data fw-bold">
+                            <label for="password">Mot de passe</label>
+                            <input id="password" type="password" placeholder="Mot de passe"
+                                   class="form-control w-100 @error('password') is-invalid @enderror"
+                                   name="password" required autocomplete="current-password">
+                            @error('password')
+                                <span class="invalid-feedback d-block">{{ $message }}</span>
+                            @enderror
+                        </div>
 
-                                <div class="ms-3"><a class="text-decoration-none forgot-text" href="#">Mot de
-                                        passe oublié?</a></div>
+                        <div class="d-flex justify-content-end mb-3">
+                            <a class="text-decoration-none forgot-text" href="#">Mot de passe oublié ?</a>
+                        </div>
 
-                            </div>
-                            <div class="signin-btn w-100 mt-2">
-                                <button class="btn btn-danger btn-block" type="submit">Connexion</button>
-                            </div>
-                        </form>
-                    </div>
+                        <div class="signin-btn w-100">
+                            <button class="btn btn-danger btn-block" type="submit">Connexion</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
+    <script src="{{ asset('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 </body>
 
 </html>

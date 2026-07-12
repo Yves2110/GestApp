@@ -1,96 +1,83 @@
-@extends('layouts.home')
+@extends('layouts.app')
+
+@section('title', 'Guides')
+
+@section('breadcrumb')
+    <li class="breadcrumb-item active">Guides</li>
+@endsection
+
 @section('content')
-    <div class="container-fluid">
-        <div class="col-md-10">
-
-            <center>
-                @if (session()->has('message'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        {{ session()->get('message') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
-            </center>
-
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Guide d'évaluation des activités</h5>
-
-                    <!-- Table with stripped rows -->
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">Fichier</th>
-                                {{-- <th scope="col">Intutiler</th> --}}
-                                <th scope="col">Date de mise en service</th>
-                                <th scope="col">Date de mise a jour</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($guides as $guide)
-                                <tr>
-                                    <th scope="row"> {{ $guide->id }} </th>
-                                    {{-- <td> {{ $guide->file }}</td> --}}
-                                  <td> <button class="btn btn-lg btn-success ">
-                                        <a href="{{ asset ('docs/'.$guide->fichier) }}" class="text-white" target="_blank">Guide</a>
-                                   </button> </td>
-                                    <td> {{ $guide->created_at }}</td>
-                                    <td> {{ $guide->update_at }}</td>
-                                    <td> <a href="#" class="btn badge btn-info">Editer</a></td>
-                                    <td> <a href=" {{route ('delete.guide',$guide->id) }} " class="btn badge btn-danger">Supprimer</a></td>
-                                </tr>
-                 </tbody>
-                    </table>
-                    <!-- End Table with stripped rows -->
-
-                @empty
-                    <h1 class="text-dark">Aucun</h1>
-                    @endforelse
-                </div>
-            </div>
-
-        </div>
-        <div class="col-md-2">
-
-            <!-- Vertically centered Modal -->
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#verticalycentered">
-                Nouveau
-            </button>
-            <div class="modal fade" id="verticalycentered" tabindex="-1">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <form action="{{ route('guide') }}" method="post" enctype="multipart/form-data">
-                            @csrf
-                            <div class="modal-header">
-                                <h5 class="modal-title">Ajout d'un nouveau guide</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-
-                                <div class="row mb-3">
-                                    <label for="inputNumber" class="col-sm-2 col-form-label">Fichier</label>
-                                    <div class="col-sm-10">
-                                        <input class="form-control" type="file" id="formFile" name="fichier">
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div class="modal-footer">
-                                <button type="submit" class="btn btn-primary">enregistrer</button>
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div><!-- End Vertically centered Modal-->
-
-
-            {{--
-            <div class="btn btn-secondary badge-outline-info">
-                Nouveau
-            </div> --}}
-        </div>
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Guides d'évaluation</h1>
+        <p class="page-subtitle">Documents de référence pour l'évaluation des activités</p>
     </div>
+    <div class="page-actions">
+        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addGuideModal">
+            <i class="bi bi-upload me-1"></i> Téléverser un guide
+        </button>
+    </div>
+</div>
+
+@if(session('message'))
+    <x-alert type="success" :dismissible="true">{{ session('message') }}</x-alert>
+@endif
+
+<x-card :noPad="true">
+    @if($guides->isEmpty())
+        <x-empty-state icon="bi-file-earmark-text" title="Aucun guide" message="Téléversez le premier guide d'évaluation." />
+    @else
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="width:60px">#</th>
+                    <th>Fichier</th>
+                    <th class="hide-mobile">Mis en ligne</th>
+                    <th style="width:100px">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($guides as $guide)
+                <tr>
+                    <td class="text-sm text-muted">{{ $guide->id }}</td>
+                    <td>
+                        <a href="{{ asset('docs/' . $guide->fichier) }}" target="_blank"
+                           class="d-flex align-items-center gap-2 text-link fw-medium">
+                            <i class="bi bi-file-earmark-pdf text-danger"></i>
+                            {{ $guide->fichier }}
+                        </a>
+                    </td>
+                    <td class="text-sm text-muted hide-mobile">{{ $guide->created_at->format('d/m/Y') }}</td>
+                    <td>
+                        <a href="{{ route('delete.guide', $guide->id) }}" class="btn btn-ghost btn-icon btn-sm text-danger" title="Supprimer"
+                           onclick="return confirm('Supprimer ce guide ?')">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+    @endif
+</x-card>
+
+{{-- Modal upload --}}
+<x-modal id="addGuideModal" title="Téléverser un guide" icon="bi-upload">
+    <form action="{{ route('guide') }}" method="POST" enctype="multipart/form-data">
+        @csrf
+        <div class="form-group">
+            <label class="form-label">Fichier PDF <span class="required">*</span></label>
+            <input type="file" class="form-control" name="fichier" accept=".pdf,.doc,.docx" required>
+            <small class="form-text text-muted">Formats acceptés : PDF, DOC, DOCX</small>
+        </div>
+        <x-slot:footer>
+            <button type="button" class="btn btn-ghost btn-sm" data-bs-dismiss="modal">Annuler</button>
+            <button type="submit" class="btn btn-primary btn-sm">
+                <i class="bi bi-upload me-1"></i> Téléverser
+            </button>
+        </x-slot:footer>
+    </form>
+</x-modal>
 @endsection

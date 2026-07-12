@@ -1,0 +1,158 @@
+/* =============================================================================
+   GestApp — Buttons
+   ============================================================================= */
+
+.btn {
+    font-family: var(--font-family);
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-sm);
+    border-radius: var(--border-radius);
+    padding: 0.5rem 1rem;
+    line-height: 1.5;
+    transition: all var(--transition-fast);
+    border: 1px solid transparent;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    white-space: nowrap;
+    user-select: none;
+}
+
+/* Primary */
+.btn-primary {
+    background-color: var(--clr-primary);
+    border-color: var(--clr-primary);
+    color: var(--clr-white);
+}
+.btn-primary:hover, .btn-primary:focus {
+    background-color: var(--clr-primary-hover);
+    border-color: var(--clr-primary-hover);
+    color: var(--clr-white);
+    box-shadow: 0 0 0 3px rgba(26,86,219,.25);
+}
+
+/* Secondary */
+.btn-secondary {
+    background-color: var(--clr-gray-200);
+    border-color: var(--clr-gray-200);
+    color: var(--text-primary);
+}
+.btn-secondary:hover, .btn-secondary:focus {
+    background-color: var(--clr-gray-300);
+    border-color: var(--clr-gray-300);
+    color: var(--text-primary);
+}
+
+/* Outline primary */
+.btn-outline-primary {
+    background-color: transparent;
+    border-color: var(--clr-primary);
+    color: var(--clr-primary);
+}
+.btn-outline-primary:hover, .btn-outline-primary:focus {
+    background-color: var(--clr-primary-light);
+    color: var(--clr-primary-dark);
+}
+
+/* Danger */
+.btn-danger {
+    background-color: var(--clr-danger);
+    border-color: var(--clr-danger);
+    color: var(--clr-white);
+}
+.btn-danger:hover, .btn-danger:focus {
+    background-color: var(--clr-danger-dark);
+    border-color: var(--clr-danger-dark);
+    color: var(--clr-white);
+    box-shadow: 0 0 0 3px rgba(239,68,68,.25);
+}
+
+/* Success */
+.btn-success {
+    background-color: var(--clr-success);
+    border-color: var(--clr-success);
+    color: var(--clr-white);
+}
+.btn-success:hover, .btn-success:focus {
+    background-color: var(--clr-success-dark);
+    border-color: var(--clr-success-dark);
+    color: var(--clr-white);
+}
+
+/* Warning */
+.btn-warning {
+    background-color: var(--clr-warning);
+    border-color: var(--clr-warning);
+    color: var(--clr-white);
+}
+.btn-warning:hover {
+    background-color: var(--clr-warning-dark);
+    border-color: var(--clr-warning-dark);
+    color: var(--clr-white);
+}
+
+/* Ghost */
+.btn-ghost {
+    background-color: transparent;
+    border-color: transparent;
+    color: var(--text-secondary);
+}
+.btn-ghost:hover, .btn-ghost:focus {
+    background-color: var(--clr-gray-100);
+    color: var(--text-primary);
+}
+
+/* Sizes */
+.btn-sm {
+    font-size: var(--font-size-xs);
+    padding: 0.3rem 0.65rem;
+}
+.btn-lg {
+    font-size: var(--font-size-lg);
+    padding: 0.65rem 1.5rem;
+}
+.btn-xl {
+    font-size: var(--font-size-xl);
+    padding: 0.8rem 2rem;
+}
+
+/* Icon only */
+.btn-icon {
+    padding: 0.5rem;
+    width: 2.25rem;
+    height: 2.25rem;
+    justify-content: center;
+}
+.btn-icon.btn-sm {
+    padding: 0.3rem;
+    width: 1.75rem;
+    height: 1.75rem;
+}
+
+/* Loading state */
+.btn.loading {
+    pointer-events: none;
+    opacity: 0.75;
+}
+.btn.loading::before {
+    content: '';
+    display: inline-block;
+    width: 0.875rem;
+    height: 0.875rem;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    flex-shrink: 0;
+}
+
+/* Full width */
+.btn-block { width: 100%; justify-content: center; }
+
+/* Disabled */
+.btn:disabled, .btn[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}

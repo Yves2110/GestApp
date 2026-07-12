@@ -1,90 +1,88 @@
-@extends('layouts.home')
+@extends('layouts.app')
+
+@section('title', 'Sous-objectifs')
+
+@section('breadcrumb')
+    <li class="breadcrumb-item"><a href="{{ route('Objective') }}">Objectifs</a></li>
+    <li class="breadcrumb-item active">Sous-objectifs</li>
+@endsection
+
 @section('content')
-<center>
-    @if (session()->has('message'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session()->get('message') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
-</center>
-    <div class="container d-flex">
-        <div class="col-md-12">
-            <!-- Vertically centered Modal -->
-            <a href="#" class="btn btn-primary float-end me-3" data-bs-toggle="modal" data-bs-target="#largeModal">
-                <button type="button" class="btn btn-primary">
-                    <i class="bi bi-plus-circle"></i>
-                    Nouveau Sous Objectif
-                </button></a>
-            <div class="modal fade" id="largeModal" tabindex="-1">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <form action="{{ route('UnderObjectiveStore') }}" method="post" enctype="multipart/form-data">
-                            @csrf
-                            <div class="modal-header">
-                                <h5 class="modal-title">Ajout d'un Sous Objectif</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-
-                                <div class="row mb-3">
-                                    <label for="inputNumber" class="col-sm-2 col-form-label">Sous Objectif</label>
-                                    <div class="col-md-10 my-3">
-                                        <input class="form-control fs-5" type="text" name="label">
-                                    </div>
-                                    <label for="inputNumber" class="col-sm-2 col-form-label">Objectif</label>
-                                    <div class="col-md-10">
-                                        <select id="floatingSelect" name="objective_id" class="form-select fs-5" required>
-                                            <option value="" selected hidden>Choix de l'objectif global</option>
-                                            @foreach ($objectives as $objective)
-                                                <option value="{{ $objective->id }}"> {{ $objective->label }} </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div class="modal-footer">
-                                <button type="submit" class="btn btn-primary">enregistrer</button>
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div><!-- End Vertically centered Modal-->
-
-            <!-- Table with hoverable rows -->
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th scope="col">N°</th>
-                        <th scope="col">N° Objectif</th>
-                        <th scope="col">Intitulé</th>
-                        <th scope="col">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($under_objectives as $under_objective)
-                        <tr>
-                            <th scope="row"> {{ $under_objective->id }} </th>
-                            <td> {{ $under_objective->objective_id }}</td>
-                            <td class="fs-3 fw-bold"> {{ $under_objective->label }}</td>
-                            <td>
-                                <a href="#" class="btn badge btn-info">Editer</a>
-                                <a href=" {{ route('delete.under_objective', $under_objective->id) }} "
-                                    class="btn badge btn-danger">Supprimer</a>
-                            </td>
-                        </tr>
-                    @empty
-                    <h1>Pas de Sous objectif enregistré</h1>
-                    @endforelse
-
-
-                </tbody>
-            </table>
-            <!-- End Table with hoverable rows -->
-
-        </div>
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Sous-objectifs</h1>
+        <p class="page-subtitle">Déclinaison des objectifs stratégiques</p>
     </div>
+    <div class="page-actions">
+        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addUnderObjectiveModal">
+            <i class="bi bi-plus-lg me-1"></i> Nouveau sous-objectif
+        </button>
+    </div>
+</div>
+
+@if(session('message'))
+    <x-alert type="success" :dismissible="true">{{ session('message') }}</x-alert>
+@endif
+
+<x-card :noPad="true">
+    @if($under_objectives->isEmpty())
+        <x-empty-state icon="bi-diagram-3" title="Aucun sous-objectif" message="Créez votre premier sous-objectif." />
+    @else
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="width:60px">N°</th>
+                    <th>Objectif parent</th>
+                    <th>Intitulé</th>
+                    <th style="width:100px">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($under_objectives as $uo)
+                <tr>
+                    <td class="text-sm text-muted fw-semi">{{ $uo->id }}</td>
+                    <td class="text-sm text-muted">{{ $uo->objective->label ?? '—' }}</td>
+                    <td class="fw-medium">{{ $uo->label }}</td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            <a href="{{ route('delete.under_objective', $uo->id) }}" class="btn btn-ghost btn-icon btn-sm text-danger" title="Supprimer"
+                               onclick="return confirm('Supprimer ce sous-objectif ?')">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+    @endif
+</x-card>
+
+{{-- Modal ajout --}}
+<x-modal id="addUnderObjectiveModal" title="Nouveau sous-objectif" icon="bi-diagram-3">
+    <form action="{{ route('UnderObjectiveStore') }}" method="POST">
+        @csrf
+        <div class="form-group">
+            <label class="form-label">Intitulé <span class="required">*</span></label>
+            <input type="text" class="form-control" name="label" required placeholder="Libellé du sous-objectif">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Objectif parent <span class="required">*</span></label>
+            <select name="objective_id" class="form-select" required>
+                <option value="" disabled selected>Choisir un objectif</option>
+                @foreach($objectives as $objective)
+                    <option value="{{ $objective->id }}">{{ $objective->label }}</option>
+                @endforeach
+            </select>
+        </div>
+        <x-slot:footer>
+            <button type="button" class="btn btn-ghost btn-sm" data-bs-dismiss="modal">Annuler</button>
+            <button type="submit" class="btn btn-primary btn-sm">
+                <i class="bi bi-check-lg me-1"></i> Enregistrer
+            </button>
+        </x-slot:footer>
+    </form>
+</x-modal>
 @endsection

@@ -14,13 +14,13 @@ class Objective extends Model
         'label',
     ];
 
-    public function under_objective()
+    public function underObjectives()
     {
-        return $this->hasMany(under_objective::class);
+        return $this->hasMany(UnderObjective::class);
     }
 
-    // public function activities()
-    // {
-    //     return $this->hasMany(Activities::class);
-    // }
+    public function activities()
+    {
+        return $this->hasMany(Activity::class, 'objective_id');
+    }
 }

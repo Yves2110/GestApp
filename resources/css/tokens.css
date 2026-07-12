@@ -1,0 +1,132 @@
+/* =============================================================================
+   GestApp University 3.0 — Design Tokens
+   Toutes les valeurs de design sont centralisées ici.
+   ============================================================================= */
+
+:root {
+    /* --- Couleurs principales --- */
+    --clr-primary:        #1a56db;
+    --clr-primary-dark:   #1240a3;
+    --clr-primary-light:  #e8effd;
+    --clr-primary-hover:  #1648c7;
+
+    --clr-secondary:      #0ea5e9;
+    --clr-secondary-dark: #0284c7;
+    --clr-secondary-light:#e0f2fe;
+
+    --clr-success:        #10b981;
+    --clr-success-dark:   #059669;
+    --clr-success-light:  #d1fae5;
+
+    --clr-warning:        #f59e0b;
+    --clr-warning-dark:   #d97706;
+    --clr-warning-light:  #fef3c7;
+
+    --clr-danger:         #ef4444;
+    --clr-danger-dark:    #dc2626;
+    --clr-danger-light:   #fee2e2;
+
+    --clr-info:           #6366f1;
+    --clr-info-dark:      #4f46e5;
+    --clr-info-light:     #e0e7ff;
+
+    /* --- Nuances de gris --- */
+    --clr-white:          #ffffff;
+    --clr-gray-50:        #f9fafb;
+    --clr-gray-100:       #f3f4f6;
+    --clr-gray-200:       #e5e7eb;
+    --clr-gray-300:       #d1d5db;
+    --clr-gray-400:       #9ca3af;
+    --clr-gray-500:       #6b7280;
+    --clr-gray-600:       #4b5563;
+    --clr-gray-700:       #374151;
+    --clr-gray-800:       #1f2937;
+    --clr-gray-900:       #111827;
+
+    /* --- Surfaces & arrière-plans --- */
+    --bg-app:             #f0f4f8;
+    --bg-sidebar:         #1f2937;
+    --bg-sidebar-hover:   #374151;
+    --bg-sidebar-active:  #1a56db;
+    --bg-header:          #ffffff;
+    --bg-card:            #ffffff;
+    --bg-muted:           var(--clr-gray-100);
+
+    /* --- Textes --- */
+    --text-primary:       var(--clr-gray-900);
+    --text-secondary:     var(--clr-gray-600);
+    --text-muted:         var(--clr-gray-400);
+    --text-inverse:       var(--clr-white);
+    --text-link:          var(--clr-primary);
+    --text-sidebar:       #d1d5db;
+    --text-sidebar-muted: #9ca3af;
+
+    /* --- Bordures --- */
+    --border-color:       var(--clr-gray-200);
+    --border-color-dark:  var(--clr-gray-300);
+    --border-radius-sm:   0.25rem;
+    --border-radius:      0.5rem;
+    --border-radius-lg:   0.75rem;
+    --border-radius-xl:   1rem;
+    --border-radius-pill: 50rem;
+
+    /* --- Ombres --- */
+    --shadow-xs:    0 1px 2px rgba(0,0,0,.05);
+    --shadow-sm:    0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+    --shadow:       0 4px 6px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.06);
+    --shadow-md:    0 10px 15px rgba(0,0,0,.07), 0 4px 6px rgba(0,0,0,.05);
+    --shadow-lg:    0 20px 25px rgba(0,0,0,.08), 0 10px 10px rgba(0,0,0,.04);
+
+    /* --- Typographie --- */
+    --font-family:        'Inter', system-ui, -apple-system, sans-serif;
+    --font-size-xs:       0.75rem;
+    --font-size-sm:       0.875rem;
+    --font-size-base:     1rem;
+    --font-size-lg:       1.125rem;
+    --font-size-xl:       1.25rem;
+    --font-size-2xl:      1.5rem;
+    --font-size-3xl:      1.875rem;
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semi:   600;
+    --font-weight-bold:   700;
+    --line-height-tight:  1.25;
+    --line-height-base:   1.5;
+    --line-height-loose:  1.75;
+
+    /* --- Espacements --- */
+    --space-1:  0.25rem;
+    --space-2:  0.5rem;
+    --space-3:  0.75rem;
+    --space-4:  1rem;
+    --space-5:  1.25rem;
+    --space-6:  1.5rem;
+    --space-8:  2rem;
+    --space-10: 2.5rem;
+    --space-12: 3rem;
+    --space-16: 4rem;
+
+    /* --- Layout --- */
+    --sidebar-width:        240px;
+    --sidebar-collapsed-w:  64px;
+    --header-height:        64px;
+
+    /* --- Transitions --- */
+    --transition-fast:    150ms ease;
+    --transition-base:    250ms ease;
+    --transition-slow:    400ms ease;
+
+    /* --- Z-index --- */
+    --z-sidebar:   100;
+    --z-header:    200;
+    --z-modal:     300;
+    --z-toast:     400;
+    --z-tooltip:   500;
+
+    /* --- Statuts activités --- */
+    --status-draft:    var(--clr-gray-400);
+    --status-pending:  var(--clr-warning);
+    --status-active:   var(--clr-success);
+    --status-rejected: var(--clr-danger);
+    --status-done:     var(--clr-info);
+}

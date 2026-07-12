@@ -1,0 +1,156 @@
+/* =============================================================================
+   GestApp University 3.0 — Utilities custom
+   ============================================================================= */
+
+/* --- Texte --- */
+.text-xs     { font-size: var(--font-size-xs) !important; }
+.text-sm     { font-size: var(--font-size-sm) !important; }
+.text-lg     { font-size: var(--font-size-lg) !important; }
+.text-xl     { font-size: var(--font-size-xl) !important; }
+.fw-medium   { font-weight: var(--font-weight-medium) !important; }
+.fw-semi     { font-weight: var(--font-weight-semi) !important; }
+.text-muted-sm { font-size: var(--font-size-sm); color: var(--text-muted); }
+
+/* --- Couleurs sémantiques --- */
+.text-success-custom { color: var(--clr-success) !important; }
+.text-warning-custom { color: var(--clr-warning) !important; }
+.text-danger-custom  { color: var(--clr-danger) !important; }
+.text-info-custom    { color: var(--clr-info) !important; }
+
+/* --- Arrière-plans --- */
+.bg-primary-light   { background-color: var(--clr-primary-light) !important; }
+.bg-success-light   { background-color: var(--clr-success-light) !important; }
+.bg-warning-light   { background-color: var(--clr-warning-light) !important; }
+.bg-danger-light    { background-color: var(--clr-danger-light) !important; }
+.bg-info-light      { background-color: var(--clr-info-light) !important; }
+.bg-muted           { background-color: var(--bg-muted) !important; }
+
+/* --- Bordures --- */
+.border-light  { border-color: var(--border-color) !important; }
+.rounded-lg    { border-radius: var(--border-radius-lg) !important; }
+.rounded-xl    { border-radius: var(--border-radius-xl) !important; }
+
+/* --- Ombres --- */
+.shadow-xs { box-shadow: var(--shadow-xs) !important; }
+.shadow-sm { box-shadow: var(--shadow-sm) !important; }
+.shadow-md { box-shadow: var(--shadow-md) !important; }
+
+/* --- Espacement --- */
+.gap-1  { gap: var(--space-1) !important; }
+.gap-2  { gap: var(--space-2) !important; }
+.gap-3  { gap: var(--space-3) !important; }
+.gap-6  { gap: var(--space-6) !important; }
+
+/* --- Overflow --- */
+.overflow-hidden { overflow: hidden !important; }
+.overflow-auto   { overflow: auto !important; }
+
+/* --- Curseurs --- */
+.cursor-pointer { cursor: pointer !important; }
+
+/* --- Transitions --- */
+.transition { transition: all var(--transition-base) !important; }
+
+/* --- Truncation --- */
+.text-truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-clamp: 2;
+    overflow: hidden;
+}
+
+/* --- Divider --- */
+.divider {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: var(--space-4) 0;
+}
+
+/* --- KPI card value --- */
+.kpi-value {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    line-height: 1;
+    color: var(--text-primary);
+}
+
+/* --- Status dot --- */
+.status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.status-dot--active   { background-color: var(--clr-success); }
+.status-dot--pending  { background-color: var(--clr-warning); }
+.status-dot--inactive { background-color: var(--clr-gray-400); }
+.status-dot--danger   { background-color: var(--clr-danger); }
+
+/* --- Animations --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeIn var(--transition-base) both; }
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+.spin { animation: spin 0.75s linear infinite; }
+
+/* --- Spacing extras --- */
+.mb-6 { margin-bottom: var(--space-6) !important; }
+.mt-6 { margin-top:    var(--space-6) !important; }
+.p-4  { padding:       var(--space-4) !important; }
+.p-5  { padding:       var(--space-5) !important; }
+
+/* --- Link helpers --- */
+.text-link {
+    color: var(--text-link);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+.text-link:hover { color: var(--clr-primary-dark); text-decoration: underline; }
+
+/* --- Form required marker --- */
+.required { color: var(--clr-danger); font-weight: var(--font-weight-semi); }
+
+/* --- Page header --- */
+.page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+    flex-wrap: wrap;
+}
+.page-title {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.2;
+}
+.page-subtitle {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    margin: var(--space-1) 0 0;
+}
+.page-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-shrink: 0;
+}
+
+/* --- Responsive hide/show --- */
+@media (max-width: 767.98px) {
+    .hide-mobile { display: none !important; }
+    .page-header { flex-direction: column; }
+    .page-actions { width: 100%; }
+}
+@media (min-width: 768px) {
+    .hide-desktop { display: none !important; }
+}

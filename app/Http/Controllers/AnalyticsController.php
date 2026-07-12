@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Activities;
+use App\Models\Activity;
 use App\Models\Objective;
-use App\Models\under_objective;
-use App\Models\service;
+use App\Models\UnderObjective;
+use App\Models\Service;
 use App\Models\Periode;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -19,83 +19,104 @@ class AnalyticsController extends Controller
      */
     public function index()
     {
-        // Statistiques générales
+        $driver = DB::getDriverName();
+
+        // KPIs généraux — une seule requête agrégée sur activities
+        $activityAgg = DB::table('activities')
+            ->selectRaw('
+                COUNT(*) as total_activities,
+                COALESCE(SUM(price), 0) as total_budget,
+                SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) as active_activities,
+                SUM(CASE WHEN status = 0 THEN 1 ELSE 0 END) as pending_activities
+            ')
+            ->first();
+
         $stats = [
-            'total_objectives' => Objective::count(),
-            'total_under_objectives' => under_objective::count(),
-            'total_activities' => Activities::count(),
-            'total_services' => service::count(),
-            'total_users' => User::count(),
-            'total_budget' => Activities::sum('price'),
-            'active_activities' => Activities::where('status', 1)->count(),
-            'pending_activities' => Activities::where('status', 0)->count(),
+            'total_objectives'       => Objective::count(),
+            'total_under_objectives' => UnderObjective::count(),
+            'total_activities'       => (int) $activityAgg->total_activities,
+            'total_services'         => Service::count(),
+            'total_users'            => User::count(),
+            'total_budget'           => (int) $activityAgg->total_budget,
+            'active_activities'      => (int) $activityAgg->active_activities,
+            'pending_activities'     => (int) $activityAgg->pending_activities,
         ];
 
-        // Données pour graphique des activités par service
-        $activitiesByService = Activities::join('services', 'activities.service_id', '=', 'services.id')
-            ->selectRaw('services.service as label, COUNT(*) as value, SUM(activities.price) as budget')
-            ->groupBy('services.service', 'activities.service_id')
+        // KPIs workflow — une seule requête GROUP BY
+        $wfRows = DB::table('activities')
+            ->selectRaw('workflow_status, COUNT(*) as total')
+            ->groupBy('workflow_status')
+            ->pluck('total', 'workflow_status');
+
+        $workflowStats = [
+            Activity::WF_DRAFT     => (int) ($wfRows[Activity::WF_DRAFT]     ?? 0),
+            Activity::WF_PENDING   => (int) ($wfRows[Activity::WF_PENDING]   ?? 0),
+            Activity::WF_VALIDATED => (int) ($wfRows[Activity::WF_VALIDATED] ?? 0),
+            Activity::WF_REJECTED  => (int) ($wfRows[Activity::WF_REJECTED]  ?? 0),
+        ];
+
+        // Activités par service
+        $activitiesByService = Activity::join('services', 'activities.service_id', '=', 'services.id')
+            ->selectRaw('services.label as label, COUNT(*) as value, COALESCE(SUM(activities.price),0) as budget')
+            ->groupBy('services.label', 'activities.service_id')
             ->orderBy('value', 'desc')
             ->get();
 
-        // Données pour graphique des objectifs par période
-        $objectivesByPeriod = Activities::join('periodes', 'activities.periode_id', '=', 'periodes.id')
-            ->selectRaw('periodes.label as period, COUNT(*) as activities, SUM(activities.price) as total_budget')
+        // Activités par période
+        $objectivesByPeriod = Activity::join('periodes', 'activities.periode_id', '=', 'periodes.id')
+            ->selectRaw('periodes.label as period, COUNT(*) as activities, COALESCE(SUM(activities.price),0) as total_budget')
             ->groupBy('periodes.label', 'activities.periode_id')
-            ->orderBy('period')
+            ->orderBy('activities', 'desc')
             ->get();
 
-        // Évolution mensuelle des activités
-        $monthlyActivities = Activities::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, COUNT(*) as count')
+        // Évolution mensuelle (compatible MySQL & SQLite)
+        $monthExpr = $driver === 'sqlite'
+            ? "strftime('%Y-%m', created_at) as month"
+            : "DATE_FORMAT(created_at, '%Y-%m') as month";
+
+        $monthlyActivities = Activity::selectRaw("{$monthExpr}, COUNT(*) as count")
             ->where('created_at', '>=', Carbon::now()->subMonths(12))
             ->groupBy('month')
             ->orderBy('month')
             ->get();
 
-        // Top 5 des services les plus actifs
-        $topServices = Activities::join('services', 'activities.service_id', '=', 'services.id')
-            ->selectRaw('services.service as name, COUNT(*) as activities, SUM(activities.price) as total_budget')
-            ->groupBy('services.service', 'activities.service_id')
+        // Top 5 services
+        $topServices = Activity::join('services', 'activities.service_id', '=', 'services.id')
+            ->selectRaw('services.label as name, COUNT(*) as activities, COALESCE(SUM(activities.price),0) as total_budget')
+            ->groupBy('services.label', 'activities.service_id')
             ->orderBy('activities', 'desc')
             ->limit(5)
             ->get();
 
-        // Répartition des statuts d'activités
-        $statusDistribution = [
-            'active' => Activities::where('status', 1)->count(),
-            'pending' => Activities::where('status', 0)->count(),
-        ];
-
-        // Budget par service pour le graphique circulaire
-        $budgetByService = Activities::join('services', 'activities.service_id', '=', 'services.id')
-            ->selectRaw('services.service as name, SUM(activities.price) as value')
-            ->groupBy('services.service', 'activities.service_id')
+        // Budget par service
+        $budgetByService = Activity::join('services', 'activities.service_id', '=', 'services.id')
+            ->selectRaw('services.label as name, COALESCE(SUM(activities.price),0) as value')
+            ->groupBy('services.label', 'activities.service_id')
             ->orderBy('value', 'desc')
             ->get();
 
-        // Activités récentes avec relations
-        $recentActivities = Activities::with(['service', 'objective', 'under_objective', 'periode'])
+        // Activités récentes
+        $recentActivities = Activity::with(['service', 'objective', 'underObjective', 'periode'])
             ->latest()
             ->take(10)
             ->get();
 
-        // Objectifs les plus performants
+        // Top objectifs
         $topObjectives = Objective::withCount('activities')
             ->withSum('activities', 'price')
             ->orderBy('activities_count', 'desc')
             ->limit(5)
             ->get();
 
+        // Taux de validation
+        $validationRate = $stats['total_activities'] > 0
+            ? round($workflowStats[Activity::WF_VALIDATED] / $stats['total_activities'] * 100, 1)
+            : 0;
+
         return view('pages.analytics', compact(
-            'stats',
-            'activitiesByService',
-            'objectivesByPeriod',
-            'monthlyActivities',
-            'topServices',
-            'statusDistribution',
-            'budgetByService',
-            'recentActivities',
-            'topObjectives'
+            'stats', 'workflowStats', 'validationRate',
+            'activitiesByService', 'objectivesByPeriod', 'monthlyActivities',
+            'topServices', 'budgetByService', 'recentActivities', 'topObjectives'
         ));
     }
 
@@ -104,9 +125,9 @@ class AnalyticsController extends Controller
      */
     public function getActivitiesByService()
     {
-        $data = Activities::join('services', 'activities.service_id', '=', 'services.id')
-            ->selectRaw('services.service as label, COUNT(*) as value')
-            ->groupBy('services.service', 'activities.service_id')
+        $data = Activity::join('services', 'activities.service_id', '=', 'services.id')
+            ->selectRaw('services.label as label, COUNT(*) as value')
+            ->groupBy('services.label', 'activities.service_id')
             ->orderBy('value', 'desc')
             ->get();
 
@@ -114,11 +135,16 @@ class AnalyticsController extends Controller
     }
 
     /**
-     * API pour les données du graphique d'évolution mensuelle
+     * API pour les données du graphique d'évolution mensuelle (MySQL + SQLite)
      */
     public function getMonthlyEvolution()
     {
-        $data = Activities::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, COUNT(*) as count')
+        $driver    = DB::getDriverName();
+        $monthExpr = $driver === 'sqlite'
+            ? "strftime('%Y-%m', created_at) as month"
+            : "DATE_FORMAT(created_at, '%Y-%m') as month";
+
+        $data = Activity::selectRaw("{$monthExpr}, COUNT(*) as count")
             ->where('created_at', '>=', Carbon::now()->subMonths(12))
             ->groupBy('month')
             ->orderBy('month')
@@ -132,9 +158,9 @@ class AnalyticsController extends Controller
      */
     public function getBudgetByService()
     {
-        $data = Activities::join('services', 'activities.service_id', '=', 'services.id')
-            ->selectRaw('services.service as name, SUM(activities.price) as value')
-            ->groupBy('services.service', 'activities.service_id')
+        $data = Activity::join('services', 'activities.service_id', '=', 'services.id')
+            ->selectRaw('services.label as name, SUM(activities.price) as value')
+            ->groupBy('services.label', 'activities.service_id')
             ->orderBy('value', 'desc')
             ->get();
 
@@ -147,7 +173,7 @@ class AnalyticsController extends Controller
     public function exportExcel()
     {
         // Préparation des données pour l'export
-        $activities = Activities::with(['service', 'objective', 'under_objective', 'periode'])
+        $activities = Activity::with(['service', 'objective', 'underObjective', 'periode'])
             ->get()
             ->map(function ($activity) {
                 return [
@@ -181,7 +207,7 @@ class AnalyticsController extends Controller
      */
     public function getServiceStats($serviceId)
     {
-        $service = service::findOrFail($serviceId);
+        $service = Service::findOrFail($serviceId);
         
         $stats = [
             'service' => $service->service,
@@ -201,51 +227,83 @@ class AnalyticsController extends Controller
     }
 
     /**
-     * Rapport de performance global
+     * Rapport de performance global — page Blade
      */
     public function performanceReport()
     {
-        // Période de analyse (derniers 6 mois)
+        $driver    = DB::getDriverName();
         $startDate = Carbon::now()->subMonths(6);
-        $endDate = Carbon::now();
+        $prevStart = Carbon::now()->subMonths(12);
+        $endDate   = Carbon::now();
 
-        // Taux de complétion des activités
-        $completionRate = Activities::where('created_at', '>=', $startDate)
-            ->where('status', 1)
-            ->count() / Activities::where('created_at', '>=', $startDate)->count() * 100;
+        // KPIs période courante
+        $current = Activity::where('created_at', '>=', $startDate);
+        $prev    = Activity::whereBetween('created_at', [$prevStart, $startDate]);
 
-        // Budget moyen par activité
-        $avgBudgetPerActivity = Activities::where('created_at', '>=', $startDate)
-            ->avg('price');
+        $totalCurrent  = (clone $current)->count();
+        $totalPrev     = (clone $prev)->count();
+        $validatedCurrent = (clone $current)->where('workflow_status', Activity::WF_VALIDATED)->count();
+        $budgetCurrent = (clone $current)->sum('price') ?? 0;
+        $budgetPrev    = (clone $prev)->sum('price') ?? 0;
 
-        // Croissance des activités
-        $previousPeriodActivities = Activities::whereBetween('created_at', [
-            $startDate->copy()->subMonths(6),
-            $startDate
-        ])->count();
+        $validationRate = $totalCurrent > 0
+            ? round($validatedCurrent / $totalCurrent * 100, 1) : 0;
+        $growthRate = $totalPrev > 0
+            ? round(($totalCurrent - $totalPrev) / $totalPrev * 100, 1) : 0;
+        $budgetGrowth = $budgetPrev > 0
+            ? round(($budgetCurrent - $budgetPrev) / $budgetPrev * 100, 1) : 0;
+        $avgBudget = $totalCurrent > 0
+            ? round($budgetCurrent / $totalCurrent, 0) : 0;
 
-        $currentPeriodActivities = Activities::whereBetween('created_at', [
-            $startDate,
-            $endDate
-        ])->count();
+        // Évolution mensuelle 6 mois
+        $monthExpr = $driver === 'sqlite'
+            ? "strftime('%Y-%m', created_at) as month"
+            : "DATE_FORMAT(created_at, '%Y-%m') as month";
 
-        $growthRate = $previousPeriodActivities > 0 
-            ? (($currentPeriodActivities - $previousPeriodActivities) / $previousPeriodActivities) * 100 
-            : 0;
+        $monthlyEvolution = Activity::selectRaw("
+                {$monthExpr},
+                COUNT(*) as total,
+                SUM(CASE WHEN workflow_status = 'validated' THEN 1 ELSE 0 END) as validated,
+                SUM(CASE WHEN workflow_status = 'pending'   THEN 1 ELSE 0 END) as pending,
+                COALESCE(SUM(price), 0) as budget
+            ")
+            ->where('created_at', '>=', $startDate)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
 
-        $report = [
-            'period' => [
-                'start' => $startDate->format('d/m/Y'),
-                'end' => $endDate->format('d/m/Y'),
-                'months' => 6
-            ],
-            'completion_rate' => round($completionRate, 2),
-            'avg_budget_per_activity' => round($avgBudgetPerActivity, 2),
-            'growth_rate' => round($growthRate, 2),
-            'total_activities_current' => $currentPeriodActivities,
-            'total_activities_previous' => $previousPeriodActivities,
+        // Performance par service (top 10)
+        $servicePerf = Service::join('activities', 'services.id', '=', 'activities.service_id')
+            ->selectRaw("
+                services.id,
+                services.label as name,
+                COUNT(activities.id) as total,
+                SUM(CASE WHEN activities.workflow_status = 'validated' THEN 1 ELSE 0 END) as validated,
+                COALESCE(SUM(activities.price), 0) as budget
+            ")
+            ->where('activities.created_at', '>=', $startDate)
+            ->groupBy('services.id', 'services.label')
+            ->orderBy('total', 'desc')
+            ->limit(10)
+            ->get()
+            ->map(function ($s) {
+                $s->rate = $s->total > 0 ? round($s->validated / $s->total * 100) : 0;
+                return $s;
+            });
+
+        // Workflow breakdown période courante
+        $workflowBreakdown = [
+            Activity::WF_DRAFT     => (clone $current)->where('workflow_status', Activity::WF_DRAFT)->count(),
+            Activity::WF_PENDING   => (clone $current)->where('workflow_status', Activity::WF_PENDING)->count(),
+            Activity::WF_VALIDATED => $validatedCurrent,
+            Activity::WF_REJECTED  => (clone $current)->where('workflow_status', Activity::WF_REJECTED)->count(),
         ];
 
-        return response()->json($report);
+        return view('pages.rapport-performance', compact(
+            'startDate', 'endDate',
+            'totalCurrent', 'totalPrev',
+            'validationRate', 'growthRate', 'budgetGrowth', 'avgBudget', 'budgetCurrent',
+            'monthlyEvolution', 'servicePerf', 'workflowBreakdown'
+        ));
     }
 }

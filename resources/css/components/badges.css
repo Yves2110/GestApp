@@ -1,0 +1,69 @@
+/* =============================================================================
+   GestApp — Badges & Pills
+   ============================================================================= */
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    padding: 0.25em 0.6em;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semi);
+    border-radius: var(--border-radius-pill);
+    line-height: 1;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+/* Variants */
+.badge-primary   { background-color: var(--clr-primary-light); color: var(--clr-primary-dark); }
+.badge-success   { background-color: var(--clr-success-light); color: var(--clr-success-dark); }
+.badge-warning   { background-color: var(--clr-warning-light); color: var(--clr-warning-dark); }
+.badge-danger    { background-color: var(--clr-danger-light);  color: var(--clr-danger-dark); }
+.badge-info      { background-color: var(--clr-info-light);    color: var(--clr-info-dark); }
+.badge-secondary { background-color: var(--clr-gray-100);      color: var(--clr-gray-700); }
+.badge-dark      { background-color: var(--clr-gray-800);      color: var(--clr-white); }
+
+/* Solid variants */
+.badge-solid-primary   { background-color: var(--clr-primary); color: var(--clr-white); }
+.badge-solid-success   { background-color: var(--clr-success); color: var(--clr-white); }
+.badge-solid-warning   { background-color: var(--clr-warning); color: var(--clr-white); }
+.badge-solid-danger    { background-color: var(--clr-danger);  color: var(--clr-white); }
+.badge-solid-info      { background-color: var(--clr-info);    color: var(--clr-white); }
+
+/* Status badge */
+.badge-status {
+    padding: 0.3em 0.75em;
+    font-weight: var(--font-weight-medium);
+    border-radius: var(--border-radius);
+}
+.badge-status--draft    { background-color: var(--clr-gray-100); color: var(--clr-gray-600); }
+.badge-status--pending  { background-color: var(--clr-warning-light); color: var(--clr-warning-dark); }
+.badge-status--active   { background-color: var(--clr-success-light); color: var(--clr-success-dark); }
+.badge-status--rejected { background-color: var(--clr-danger-light);  color: var(--clr-danger-dark); }
+.badge-status--done     { background-color: var(--clr-info-light);    color: var(--clr-info-dark); }
+
+/* Notification count badge */
+.badge-count {
+    min-width: 1.25rem;
+    height: 1.25rem;
+    padding: 0 0.3rem;
+    border-radius: var(--border-radius-pill);
+    font-size: 0.65rem;
+    background-color: var(--clr-danger);
+    color: var(--clr-white);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: var(--font-weight-bold);
+    line-height: 1;
+}
+
+/* Role badge */
+.badge-role {
+    font-size: 0.65rem;
+    padding: 0.2em 0.5em;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-radius: var(--border-radius-sm);
+}

@@ -5,25 +5,14 @@ export default defineConfig({
     plugins: [
         laravel({
             input: [
-                'resources/css/app.css', 
-                'resources/css/university-theme.css',
-                'resources/js/app.js'
+                'resources/css/app.css',
+                'resources/js/app.js',
+                'resources/js/pages/calendar.js',
             ],
             refresh: true,
         }),
     ],
     build: {
-        rollupOptions: {
-            output: {
-                manualChunks: {
-                    'vendor': ['bootstrap', '@popperjs/core'],
-                    'charts': ['chart.js'],
-                    'utils': ['lodash', 'axios'],
-                    'jquery': ['jquery'],
-                    'datatables': ['datatables.net-bs5']
-                }
-            }
-        },
         chunkSizeWarningLimit: 1000,
         assetsInlineLimit: 4096,
     },

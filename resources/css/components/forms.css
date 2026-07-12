@@ -1,0 +1,154 @@
+/* =============================================================================
+   GestApp — Forms
+   ============================================================================= */
+
+.form-label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
+    margin-bottom: var(--space-2);
+    display: block;
+}
+
+.form-label .required {
+    color: var(--clr-danger);
+    margin-left: 2px;
+}
+
+.form-control,
+.form-select {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-family: var(--font-family);
+    font-size: var(--font-size-sm);
+    line-height: 1.5;
+    color: var(--text-primary);
+    background-color: var(--bg-card);
+    border: 1px solid var(--clr-gray-300);
+    border-radius: var(--border-radius);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    appearance: none;
+}
+
+.form-control:focus,
+.form-select:focus {
+    outline: none;
+    border-color: var(--clr-primary);
+    box-shadow: 0 0 0 3px rgba(26,86,219,.15);
+}
+
+.form-control::placeholder { color: var(--clr-gray-400); }
+
+.form-control:disabled,
+.form-select:disabled {
+    background-color: var(--clr-gray-100);
+    color: var(--text-muted);
+    cursor: not-allowed;
+}
+
+/* Sizes */
+.form-control-sm, .form-select-sm {
+    padding: 0.3rem 0.65rem;
+    font-size: var(--font-size-xs);
+}
+.form-control-lg, .form-select-lg {
+    padding: 0.65rem 1rem;
+    font-size: var(--font-size-base);
+}
+
+/* Validation states */
+.is-valid .form-control,
+.form-control.is-valid {
+    border-color: var(--clr-success);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2310b981' d='m2.3 6.73.6.61 4-4.5-.6-.61-3.4 3.89-1.4-1.39-.6.61Z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+    padding-right: 2.5rem;
+}
+.is-invalid .form-control,
+.form-control.is-invalid {
+    border-color: var(--clr-danger);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5' fill='none' stroke='%23ef4444' stroke-width='1.5'/%3e%3cpath fill='%23ef4444' d='M5.25 3.75h1.5v3h-1.5zm0 4.5h1.5v1.5h-1.5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+    padding-right: 2.5rem;
+}
+
+.valid-feedback   { font-size: var(--font-size-xs); color: var(--clr-success); margin-top: var(--space-1); }
+.invalid-feedback { font-size: var(--font-size-xs); color: var(--clr-danger);  margin-top: var(--space-1); }
+
+/* Form group */
+.form-group { margin-bottom: var(--space-5); }
+
+/* Input group */
+.input-group {
+    display: flex;
+    align-items: stretch;
+}
+.input-group .form-control { flex: 1; border-radius: 0; }
+.input-group > *:first-child { border-radius: var(--border-radius) 0 0 var(--border-radius); }
+.input-group > *:last-child  { border-radius: 0 var(--border-radius) var(--border-radius) 0; }
+
+.input-group-text {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    background-color: var(--clr-gray-100);
+    border: 1px solid var(--clr-gray-300);
+    white-space: nowrap;
+}
+
+/* Textarea */
+textarea.form-control {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* Checkbox & Radio */
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    cursor: pointer;
+}
+.form-check-input {
+    width: 1rem;
+    height: 1rem;
+    accent-color: var(--clr-primary);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.form-check-label {
+    font-size: var(--font-size-sm);
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+/* Form text (hint) */
+.form-text {
+    font-size: var(--font-size-xs);
+    color: var(--text-muted);
+    margin-top: var(--space-1);
+    display: block;
+}
+
+/* Search input */
+.search-input-wrapper {
+    position: relative;
+}
+.search-input-wrapper .bi {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+}
+.search-input-wrapper .form-control {
+    padding-left: 2.25rem;
+}

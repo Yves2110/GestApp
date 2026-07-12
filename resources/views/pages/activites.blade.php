@@ -1,13 +1,12 @@
-@extends('layouts.home')
+{{-- Vue legacy non utilisée — le controller renvoie vers activites-modern --}}
+@extends('layouts.app')
+
+@section('title', 'Activités')
+
 @section('content')
-    <center>
-        @if (session()->has('message'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session()->get('message') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-    </center>
+    @if(session('message'))
+        <x-alert type="success" :dismissible="true">{{ session('message') }}</x-alert>
+    @endif
     <div class="titre">
         <h1>Activités</h1>
         <!-- Large Modal -->
@@ -143,4 +142,4 @@
             <!-- End Table with hoverable rows -->
             {{ $activities->links() }}
         </div>
-    @endsection
+@endsection

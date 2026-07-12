@@ -1,0 +1,139 @@
+/* =============================================================================
+   GestApp — Header
+   ============================================================================= */
+
+.app-header {
+    position: fixed;
+    top: 0;
+    left: var(--sidebar-width);
+    right: 0;
+    height: var(--header-height);
+    background-color: var(--bg-header);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    padding: 0 var(--space-6);
+    z-index: var(--z-header);
+    gap: var(--space-4);
+    transition: left var(--transition-base);
+    box-shadow: var(--shadow-xs);
+}
+
+.sidebar.collapsed ~ .app-header {
+    left: var(--sidebar-collapsed-w);
+}
+
+/* Sidebar toggle */
+.sidebar-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    background: transparent;
+    border-radius: var(--border-radius);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: all var(--transition-fast);
+    flex-shrink: 0;
+}
+.sidebar-toggle:hover {
+    background-color: var(--clr-gray-100);
+    color: var(--text-primary);
+}
+
+/* Breadcrumb */
+.header-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+.header-breadcrumb .breadcrumb-item { white-space: nowrap; }
+.header-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+    content: '/';
+    margin-right: var(--space-1);
+    color: var(--clr-gray-300);
+}
+.header-breadcrumb .breadcrumb-item a {
+    color: var(--text-secondary);
+    text-decoration: none;
+}
+.header-breadcrumb .breadcrumb-item a:hover { color: var(--text-link); }
+.header-breadcrumb .breadcrumb-item.active {
+    color: var(--text-primary);
+    font-weight: var(--font-weight-medium);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Spacer */
+.header-spacer { flex: 1; }
+
+/* Header actions */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex-shrink: 0;
+}
+
+/* User menu */
+.header-user-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-pill);
+    background: var(--clr-gray-50);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-size: var(--font-size-sm);
+    color: var(--text-primary);
+}
+.header-user-btn:hover {
+    background-color: var(--clr-gray-100);
+    border-color: var(--clr-gray-300);
+}
+
+.header-avatar {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    background-color: var(--clr-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    flex-shrink: 0;
+}
+
+.header-user-name {
+    font-weight: var(--font-weight-medium);
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (max-width: 991.98px) {
+    .app-header {
+        left: 0 !important;
+    }
+    .header-user-name { display: none; }
+}
+
+@media (max-width: 575.98px) {
+    .app-header { padding: 0 var(--space-4); gap: var(--space-2); }
+    .header-breadcrumb { display: none; }
+}

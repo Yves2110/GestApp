@@ -1,0 +1,127 @@
+/* =============================================================================
+   GestApp — Toasts & Notifications
+   ============================================================================= */
+
+/* Toast container */
+.toast-container {
+    position: fixed;
+    bottom: var(--space-6);
+    right: var(--space-6);
+    z-index: var(--z-toast);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    max-width: 360px;
+    width: 100%;
+}
+
+/* Single toast */
+.app-toast {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    animation: slideInRight var(--transition-base) both;
+    position: relative;
+    overflow: hidden;
+}
+
+.app-toast::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+}
+
+.app-toast--success::before { background-color: var(--clr-success); }
+.app-toast--error::before   { background-color: var(--clr-danger); }
+.app-toast--warning::before { background-color: var(--clr-warning); }
+.app-toast--info::before    { background-color: var(--clr-info); }
+
+.toast-icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+.app-toast--success .toast-icon { color: var(--clr-success); }
+.app-toast--error   .toast-icon { color: var(--clr-danger); }
+.app-toast--warning .toast-icon { color: var(--clr-warning); }
+.app-toast--info    .toast-icon { color: var(--clr-info); }
+
+.toast-body { flex: 1; }
+.toast-title {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semi);
+    color: var(--text-primary);
+    margin-bottom: 2px;
+}
+.toast-message {
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    line-height: var(--line-height-base);
+}
+
+.toast-close {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0;
+    font-size: 0.875rem;
+    line-height: 1;
+    transition: color var(--transition-fast);
+    flex-shrink: 0;
+}
+.toast-close:hover { color: var(--text-primary); }
+
+/* Alert (flash messages dans le layout) */
+.alert {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid transparent;
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--space-4);
+}
+.alert-success {
+    background-color: var(--clr-success-light);
+    border-color: rgba(16,185,129,.3);
+    color: var(--clr-success-dark);
+}
+.alert-danger {
+    background-color: var(--clr-danger-light);
+    border-color: rgba(239,68,68,.3);
+    color: var(--clr-danger-dark);
+}
+.alert-warning {
+    background-color: var(--clr-warning-light);
+    border-color: rgba(245,158,11,.3);
+    color: var(--clr-warning-dark);
+}
+.alert-info {
+    background-color: var(--clr-info-light);
+    border-color: rgba(99,102,241,.3);
+    color: var(--clr-info-dark);
+}
+
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(20px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideOutRight {
+    from { opacity: 1; transform: translateX(0); }
+    to   { opacity: 0; transform: translateX(20px); }
+}
+
+.app-toast.dismissing {
+    animation: slideOutRight var(--transition-base) both;
+}

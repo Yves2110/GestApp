@@ -1,0 +1,65 @@
+/* =============================================================================
+   GestApp — Modals
+   ============================================================================= */
+
+.modal-content {
+    border: none;
+    border-radius: var(--border-radius-xl);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+}
+
+.modal-header {
+    padding: var(--space-5) var(--space-6);
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--clr-gray-50);
+}
+
+.modal-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semi);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.modal-body {
+    padding: var(--space-6);
+}
+
+.modal-footer {
+    padding: var(--space-4) var(--space-6);
+    border-top: 1px solid var(--border-color);
+    background-color: var(--clr-gray-50);
+    gap: var(--space-3);
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-close {
+    opacity: 0.5;
+    transition: opacity var(--transition-fast);
+}
+.btn-close:hover { opacity: 1; }
+
+/* Confirm modal */
+.modal-confirm .modal-header {
+    background-color: var(--clr-danger-light);
+    border-bottom-color: rgba(239,68,68,.2);
+}
+.modal-confirm .modal-title { color: var(--clr-danger-dark); }
+
+/* Large form modal */
+.modal-xl .modal-content { max-width: 900px; }
+
+/* Animations */
+.modal.fade .modal-dialog {
+    transition: transform var(--transition-base), opacity var(--transition-base);
+    transform: translateY(-12px);
+    opacity: 0;
+}
+.modal.show .modal-dialog {
+    transform: translateY(0);
+    opacity: 1;
+}

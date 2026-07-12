@@ -150,7 +150,7 @@ class ExportController extends Controller
      */
     public function exportConfig()
     {
-        $services = \App\Models\service::all();
+        $services = \App\Models\Service::all();
         
         return view('pages.export-config', compact('services'));
     }

@@ -1,82 +1,82 @@
-@extends('layouts.home')
+@extends('layouts.app')
+
+@section('title', 'Objectifs')
+
+@section('breadcrumb')
+    <li class="breadcrumb-item active">Objectifs</li>
+@endsection
+
 @section('content')
-    <center>
-        @if (session()->has('message'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session()->get('message') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
-    </center>
-    <div class="container d-flex">
-
-        <div class="col-md-12">
-            <!-- Vertically centered Modal -->
-            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#largeModal">
-                <button type="button" class="btn btn-primary">
-                    <i class="bi bi-plus-circle"></i>
-                    Nouveau Objectif
-                </button></a>
-            <div class="modal fade" id="largeModal" tabindex="-1">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <form action="{{ route('ObjectiveStore') }}" method="post">
-                            @csrf
-                            <div class="modal-header">
-                                <h5 class="modal-title">Ajout d'un nouveau Objectif</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-
-                                <div class="row mb-3">
-                                    <label for="inputNumber" class="col-sm-2 col-form-label">Objectif</label>
-                                    <div class="col-md-10">
-                                        <input class="form-control" type="text" name="label"
-                                           >
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div class="modal-footer">
-                                <button type="submit" class="btn btn-primary">enregistrer</button>
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div><!-- End Vertically centered Modal-->
-
-            <!-- Table with hoverable rows -->
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th scope="col">N°</th>
-                        <th scope="col">intitulé</th>
-                        <th scope="col">Action</th>
-
-                    </tr>
-                </thead>
-                <tbody>
-
-                    @forelse ($objectives as $objective)
-                        <tr>
-                            <th scope="row" class="fs-3 fw-bold">{{ $objective->id }} </th>
-                            <td class="fs-3 fw-bold">{{ $objective->label }} </td>
-                            <td>
-                                <a href="{{ route('edit.objective', $objective->id) }}" class="btn badge btn-info"
-                                    >Editer</a>
-                                <a href=" {{ route('delete.objective', $objective->id) }} "
-                                    class="btn badge btn-danger">Supprimer</a>
-                            </td>
-                        </tr>
-                    @empty
-                        <h1></h1>
-                    @endforelse
-                </tbody>
-            </table>
-            <!-- End Table with hoverable rows -->
-            {{ $objectives->links() }}
-        </div>
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Objectifs</h1>
+        <p class="page-subtitle">Gestion des objectifs stratégiques</p>
     </div>
+    <div class="page-actions">
+        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addObjectiveModal">
+            <i class="bi bi-plus-lg me-1"></i> Nouvel objectif
+        </button>
+    </div>
+</div>
+
+@if(session('message'))
+    <x-alert type="success" :dismissible="true">{{ session('message') }}</x-alert>
+@endif
+
+<x-card :noPad="true">
+    @if($objectives->isEmpty())
+        <x-empty-state icon="bi-bullseye" title="Aucun objectif" message="Créez votre premier objectif stratégique." />
+    @else
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="width:60px">N°</th>
+                    <th>Intitulé</th>
+                    <th style="width:120px">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($objectives as $objective)
+                <tr>
+                    <td class="text-sm text-muted fw-semi">{{ $objective->id }}</td>
+                    <td class="fw-medium">{{ $objective->label }}</td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            <a href="{{ route('edit.objective', $objective->id) }}" class="btn btn-ghost btn-icon btn-sm" title="Modifier">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{{ route('delete.objective', $objective->id) }}" class="btn btn-ghost btn-icon btn-sm text-danger" title="Supprimer"
+                               onclick="return confirm('Supprimer cet objectif ?')">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+    <div class="px-4 py-3">
+        {{ $objectives->links('vendor.pagination.custom') }}
+    </div>
+    @endif
+</x-card>
+
+{{-- Modal ajout --}}
+<x-modal id="addObjectiveModal" title="Nouvel objectif" icon="bi-bullseye">
+    <form action="{{ route('ObjectiveStore') }}" method="POST">
+        @csrf
+        <div class="form-group">
+            <label class="form-label">Intitulé <span class="required">*</span></label>
+            <input type="text" class="form-control" name="label" required placeholder="Libellé de l'objectif">
+        </div>
+        <x-slot:footer>
+            <button type="button" class="btn btn-ghost btn-sm" data-bs-dismiss="modal">Annuler</button>
+            <button type="submit" class="btn btn-primary btn-sm">
+                <i class="bi bi-check-lg me-1"></i> Enregistrer
+            </button>
+        </x-slot:footer>
+    </form>
+</x-modal>
 @endsection

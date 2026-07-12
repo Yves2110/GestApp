@@ -21,6 +21,11 @@ class DatabaseSeeder extends Seeder
         SuperAdminSeeder::class,
         PresidentSeeder::class,
         PeriodeSeeder::class,
+        PermissionSeeder::class,
+        ServiceUserSeeder::class,
+        ObjectiveSeeder::class,
+        UnderObjectiveSeeder::class,
+        ActivitySeeder::class,
        ]);
     }
 }

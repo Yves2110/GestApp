@@ -1,491 +1,270 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard Analytique - GestApp')
+@section('title', 'Analytics')
 
-@section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h2 class="h3 mb-1">
-            <i class="bi bi-graph-up text-university-primary me-2"></i>
-            Dashboard Analytique
-        </h2>
-        <p class="text-muted mb-0">Statistiques et analyses des activités universitaires</p>
-    </div>
-    <div class="d-flex gap-2">
-        <button class="btn btn-outline-success" onclick="exportAnalytics()">
-            <i class="bi bi-file-earmark-excel me-1"></i>
-            Exporter Excel
-        </button>
-        <button class="btn btn-outline-primary" onclick="window.print()">
-            <i class="bi bi-printer me-1"></i>
-            Imprimer
-        </button>
-    </div>
-</div>
-
-<!-- KPI Cards -->
-<div class="row g-4 mb-4">
-    <div class="col-lg-3 col-md-6">
-        <div class="card university-stats h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted mb-2">Objectifs Globaux</h6>
-                        <h3 class="h2 mb-0">{{ $stats['total_objectives'] }}</h3>
-                        <small class="text-success">
-                            <i class="bi bi-arrow-up"></i>
-                            {{ round(($stats['total_under_objectives'] / max($stats['total_objectives'], 1)) * 100, 1) }}% de sous-objectifs
-                        </small>
-                    </div>
-                    <div class="text-university-primary">
-                        <i class="bi bi-bullseye" style="font-size: 2rem;"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-3 col-md-6">
-        <div class="card university-stats h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted mb-2">Activités Totales</h6>
-                        <h3 class="h2 mb-0">{{ $stats['total_activities'] }}</h3>
-                        <small class="text-info">
-                            <i class="bi bi-activity"></i>
-                            {{ $stats['active_activities'] }} actives
-                        </small>
-                    </div>
-                    <div class="text-university-success">
-                        <i class="bi bi-activity" style="font-size: 2rem;"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-3 col-md-6">
-        <div class="card university-stats h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted mb-2">Budget Total</h6>
-                        <h3 class="h2 mb-0">{{ number_format($stats['total_budget'], 0, '', ' ') }} €</h3>
-                        <small class="text-warning">
-                            <i class="bi bi-currency-euro"></i>
-                            {{ number_format($stats['total_budget'] / max($stats['total_activities'], 1), 0, '', ' ') }} €/activité
-                        </small>
-                    </div>
-                    <div class="text-university-warning">
-                        <i class="bi bi-currency-euro" style="font-size: 2rem;"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-3 col-md-6">
-        <div class="card university-stats h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h6 class="text-muted mb-2">Services</h6>
-                        <h3 class="h2 mb-0">{{ $stats['total_services'] }}</h3>
-                        <small class="text-secondary">
-                            <i class="bi bi-building"></i>
-                            {{ $stats['total_users'] }} utilisateurs
-                        </small>
-                    </div>
-                    <div class="text-university-secondary">
-                        <i class="bi bi-building" style="font-size: 2rem;"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Charts Row -->
-<div class="row g-4 mb-4">
-    <!-- Activities by Service Chart -->
-    <div class="col-lg-8">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="bi bi-bar-chart text-university-primary me-2"></i>
-                    Répartition des Activités par Service
-                </h5>
-            </div>
-            <div class="card-body">
-                <canvas id="activitiesByServiceChart" height="100"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <!-- Status Distribution -->
-    <div class="col-lg-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="bi bi-pie-chart text-university-primary me-2"></i>
-                    Statut des Activités
-                </h5>
-            </div>
-            <div class="card-body">
-                <canvas id="statusChart" height="200"></canvas>
-                <div class="mt-3 text-center">
-                    <small class="text-muted">
-                        Taux de complétion: 
-                        <strong class="text-success">
-                            {{ round(($statusDistribution['active'] / max(array_sum($statusDistribution), 1)) * 100, 1) }}%
-                        </strong>
-                    </small>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Budget and Evolution Charts -->
-<div class="row g-4 mb-4">
-    <!-- Budget by Service -->
-    <div class="col-lg-6">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="bi bi-cash-stack text-university-success me-2"></i>
-                    Budget par Service
-                </h5>
-            </div>
-            <div class="card-body">
-                <canvas id="budgetChart" height="150"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <!-- Monthly Evolution -->
-    <div class="col-lg-6">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="bi bi-graph-up-arrow text-university-info me-2"></i>
-                    Évolution Mensuelle (12 mois)
-                </h5>
-            </div>
-            <div class="card-body">
-                <canvas id="evolutionChart" height="150"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Top Services and Objectives -->
-<div class="row g-4 mb-4">
-    <!-- Top Services -->
-    <div class="col-lg-6">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="bi bi-trophy text-university-warning me-2"></i>
-                    Top 5 Services les Plus Actifs
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>Service</th>
-                                <th>Activités</th>
-                                <th>Budget</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($topServices as $service)
-                                <tr>
-                                    <td>
-                                        <strong>{{ $service->name }}</strong>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-primary">{{ $service->activities }}</span>
-                                    </td>
-                                    <td>
-                                        <strong>{{ number_format($service->total_budget, 0, '', ' ') }} €</strong>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Top Objectives -->
-    <div class="col-lg-6">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="bi bi-star text-university-warning me-2"></i>
-                    Top 5 Objectifs les Plus Performants
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>Objectif</th>
-                                <th>Activités</th>
-                                <th>Budget Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($topObjectives as $objective)
-                                <tr>
-                                    <td>
-                                        <strong>{{ Str::limit($objective->label, 30) }}</strong>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-success">{{ $objective->activities_count }}</span>
-                                    </td>
-                                    <td>
-                                        <strong>{{ number_format($objective->activities_sum_price ?? 0, 0, '', ' ') }} €</strong>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Recent Activities -->
-<div class="row g-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="bi bi-clock-history text-university-secondary me-2"></i>
-                    Activités Récentes
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th><i class="bi bi-hash me-1"></i>ID</th>
-                                <th><i class="bi bi-tag me-1"></i>Libellé</th>
-                                <th><i class="bi bi-building me-1"></i>Service</th>
-                                <th><i class="bi bi-bullseye me-1"></i>Objectif</th>
-                                <th><i class="bi bi-currency-euro me-1"></i>Coût</th>
-                                <th><i class="bi bi-flag me-1"></i>Statut</th>
-                                <th><i class="bi bi-calendar me-1"></i>Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($recentActivities as $activity)
-                                <tr>
-                                    <td><span class="badge bg-light text-dark">#{{ $activity->id }}</span></td>
-                                    <td>
-                                        <strong>{{ Str::limit($activity->label, 40) }}</strong>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-university-secondary text-white">
-                                            {{ $activity->service->service ?? 'N/A' }}
-                                        </span>
-                                    </td>
-                                    <td>{{ Str::limit($activity->objective->label ?? 'N/A', 25) }}</td>
-                                    <td>
-                                        <strong>{{ number_format($activity->price, 2, ',', ' ') }} €</strong>
-                                    </td>
-                                    <td>
-                                        @if($activity->status)
-                                            <span class="badge bg-success">Active</span>
-                                        @else
-                                            <span class="badge bg-warning">En attente</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <small class="text-muted">{{ $activity->created_at->format('d/m/Y H:i') }}</small>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
+@section('breadcrumb')
+    <li class="breadcrumb-item active">Analytics</li>
 @endsection
 
-@push('styles')
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-@endpush
+@section('content')
+{{-- PAGE HEADER --}}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Analytics</h1>
+        <p class="page-subtitle">Statistiques et indicateurs de performance</p>
+    </div>
+    <div class="page-actions">
+        <a href="{{ route('analytics.performance') }}" class="btn btn-ghost btn-sm">
+            <i class="bi bi-speedometer2"></i>
+            <span class="hide-mobile">Performance</span>
+        </a>
+        <a href="{{ route('export.config') }}" class="btn btn-ghost btn-sm">
+            <i class="bi bi-download"></i>
+            <span class="hide-mobile">Exporter</span>
+        </a>
+        <button class="btn btn-ghost btn-sm no-print" onclick="window.print()">
+            <i class="bi bi-printer"></i>
+            <span class="hide-mobile">Imprimer</span>
+        </button>
+    </div>
+</div>
 
-@push('scripts')
-<script>
-// Chart.js Configuration
-Chart.defaults.font.family = "'Inter', sans-serif";
-Chart.defaults.color = '#475569';
+{{-- ===== KPI CARDS GÉNÉRAUX ===== --}}
+<div class="kpi-grid mb-6">
+    <div class="kpi-card">
+        <div class="kpi-icon" style="background:var(--clr-primary-light);color:var(--clr-primary);">
+            <i class="bi bi-lightning-charge-fill"></i>
+        </div>
+        <div class="kpi-body">
+            <div class="kpi-value">{{ number_format($stats['total_activities']) }}</div>
+            <div class="kpi-label">Activités totales</div>
+        </div>
+        <div class="kpi-trend kpi-trend--up">
+            <i class="bi bi-check-circle me-1"></i>{{ $stats['active_activities'] }} actives
+        </div>
+    </div>
 
-// Activities by Service Chart
-const activitiesByServiceCtx = document.getElementById('activitiesByServiceChart').getContext('2d');
-const activitiesByServiceChart = new Chart(activitiesByServiceCtx, {
-    type: 'bar',
-    data: {
-        labels: @json($activitiesByService->pluck('label')),
-        datasets: [{
-            label: 'Nombre d\'activités',
-            data: @json($activitiesByService->pluck('value')),
-            backgroundColor: '#1e3a8a',
-            borderColor: '#1e40af',
-            borderWidth: 1
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                display: false
-            },
-            tooltip: {
-                callbacks: {
-                    label: function(context) {
-                        return context.parsed.y + ' activités';
-                    }
-                }
-            }
-        },
-        scales: {
-            y: {
-                beginAtZero: true,
-                ticks: {
-                    stepSize: 1
-                }
-            }
-        }
-    }
-});
+    <div class="kpi-card">
+        <div class="kpi-icon" style="background:#fffbeb;color:var(--clr-warning);">
+            <i class="bi bi-hourglass-split"></i>
+        </div>
+        <div class="kpi-body">
+            <div class="kpi-value">{{ $workflowStats[\App\Models\Activity::WF_PENDING] }}</div>
+            <div class="kpi-label">En attente de validation</div>
+        </div>
+        <div class="kpi-trend {{ $workflowStats[\App\Models\Activity::WF_PENDING] > 0 ? 'kpi-trend--warn' : 'kpi-trend--up' }}">
+            <i class="bi bi-diagram-2 me-1"></i>{{ $workflowStats[\App\Models\Activity::WF_REJECTED] }} rejetées
+        </div>
+    </div>
 
-// Status Distribution Chart
-const statusCtx = document.getElementById('statusChart').getContext('2d');
-const statusChart = new Chart(statusCtx, {
-    type: 'doughnut',
-    data: {
-        labels: ['Actives', 'En attente'],
-        datasets: [{
-            data: [{{ $statusDistribution['active'] }}, {{ $statusDistribution['pending'] }}],
-            backgroundColor: ['#16a34a', '#f59e0b'],
-            borderWidth: 0
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                position: 'bottom'
-            }
-        }
-    }
-});
+    <div class="kpi-card">
+        <div class="kpi-icon" style="background:#f0fdf4;color:var(--clr-success);">
+            <i class="bi bi-check-circle-fill"></i>
+        </div>
+        <div class="kpi-body">
+            <div class="kpi-value">{{ $validationRate }}%</div>
+            <div class="kpi-label">Taux de validation</div>
+        </div>
+        <div class="kpi-trend kpi-trend--up">
+            <i class="bi bi-check2-all me-1"></i>{{ $workflowStats[\App\Models\Activity::WF_VALIDATED] }} validées
+        </div>
+    </div>
 
-// Budget by Service Chart
-const budgetCtx = document.getElementById('budgetChart').getContext('2d');
-const budgetChart = new Chart(budgetCtx, {
-    type: 'doughnut',
-    data: {
-        labels: @json($budgetByService->pluck('name')),
-        datasets: [{
-            data: @json($budgetByService->pluck('value')),
-            backgroundColor: [
-                '#1e3a8a', '#64748b', '#dc2626', '#16a34a', '#f59e0b',
-                '#0ea5e9', '#8b5cf6', '#ec4899', '#f97316', '#84cc16'
-            ],
-            borderWidth: 0
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                position: 'bottom',
-                labels: {
-                    boxWidth: 12,
-                    padding: 10
-                }
-            },
-            tooltip: {
-                callbacks: {
-                    label: function(context) {
-                        return context.label + ': ' + new Intl.NumberFormat('fr-FR').format(context.parsed) + ' €';
-                    }
-                }
-            }
-        }
-    }
-});
+    <div class="kpi-card">
+        <div class="kpi-icon" style="background:var(--clr-primary-light);color:var(--clr-primary);">
+            <i class="bi bi-cash-coin"></i>
+        </div>
+        <div class="kpi-body">
+            <div class="kpi-value">{{ number_format($stats['total_budget'] / 1000000, 1) }}M</div>
+            <div class="kpi-label">Budget total (FCFA)</div>
+        </div>
+        <div class="kpi-trend kpi-trend--up">
+            <i class="bi bi-building me-1"></i>{{ $stats['total_services'] }} services
+        </div>
+    </div>
+</div>
 
-// Monthly Evolution Chart
-const evolutionCtx = document.getElementById('evolutionChart').getContext('2d');
-const evolutionChart = new Chart(evolutionCtx, {
-    type: 'line',
-    data: {
-        labels: @json($monthlyActivities->pluck('month')),
-        datasets: [{
-            label: 'Activités créées',
-            data: @json($monthlyActivities->pluck('count')),
-            borderColor: '#1e3a8a',
-            backgroundColor: 'rgba(30, 58, 138, 0.1)',
-            borderWidth: 2,
-            fill: true,
-            tension: 0.4
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                display: false
-            }
-        },
-        scales: {
-            y: {
-                beginAtZero: true,
-                ticks: {
-                    stepSize: 1
-                }
-            }
-        }
-    }
-});
+{{-- ===== WORKFLOW STATUS BARS ===== --}}
+@php
+    $wfTotal = array_sum($workflowStats);
+    $wfColors = [
+        \App\Models\Activity::WF_DRAFT     => ['var(--clr-gray-400)',  'Brouillon'],
+        \App\Models\Activity::WF_PENDING   => ['var(--clr-warning)',   'En attente'],
+        \App\Models\Activity::WF_VALIDATED => ['var(--clr-success)',   'Validé'],
+        \App\Models\Activity::WF_REJECTED  => ['var(--clr-danger)',    'Rejeté'],
+    ];
+@endphp
+<div class="row g-4 mb-6">
+    <div class="col-lg-6">
+        <x-card title="Répartition du workflow" icon="bi-diagram-2">
+            <div class="d-flex flex-column gap-3">
+                @foreach($wfColors as $status => [$color, $label])
+                @php $count = $workflowStats[$status]; $pct = $wfTotal > 0 ? round($count / $wfTotal * 100) : 0; @endphp
+                <div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="text-sm">{{ $label }}</span>
+                        <span class="text-sm fw-semi">{{ $count }} <span class="text-muted">({{ $pct }}%)</span></span>
+                    </div>
+                    <div class="progress-bar-track">
+                        <div class="progress-bar-fill" style="width:{{ $pct }}%;background:{{ $color }};"></div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </x-card>
+    </div>
 
-// Export Analytics Function
-function exportAnalytics() {
-    window.location.href = '{{ route("analytics.export") }}';
-}
+    <div class="col-lg-6">
+        <x-card title="Top 5 services" icon="bi-building">
+            <div class="d-flex flex-column gap-3">
+                @php $maxAct = $topServices->max('activities') ?: 1; @endphp
+                @forelse($topServices as $s)
+                @php $pct = round($s->activities / $maxAct * 100); @endphp
+                <div>
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="text-sm">{{ \Illuminate\Support\Str::limit($s->name, 30) }}</span>
+                        <span class="text-sm fw-semi">{{ $s->activities }} activités</span>
+                    </div>
+                    <div class="progress-bar-track">
+                        <div class="progress-bar-fill" style="width:{{ $pct }}%;background:var(--clr-primary);"></div>
+                    </div>
+                </div>
+                @empty
+                <p class="text-muted text-sm">Aucune donnée.</p>
+                @endforelse
+            </div>
+        </x-card>
+    </div>
+</div>
 
-// Auto-refresh data every 5 minutes
-setInterval(() => {
-    // Refresh charts data via API calls
-    fetch('{{ route("api.analytics.activities-by-service") }}')
-        .then(response => response.json())
-        .then(data => {
-            activitiesByServiceChart.data.labels = data.map(item => item.label);
-            activitiesByServiceChart.data.datasets[0].data = data.map(item => item.value);
-            activitiesByServiceChart.update();
-        });
-}, 300000); // 5 minutes
-</script>
-@endpush
+{{-- ===== ACTIVITÉS PAR PÉRIODE ===== --}}
+<div class="row g-4 mb-6">
+    <div class="col-lg-8">
+        <x-card title="Activités par période" icon="bi-calendar3">
+            @if($objectivesByPeriod->isEmpty())
+                <x-empty-state icon="bi-calendar3" title="Aucune donnée" message="Pas encore d'activités par période." />
+            @else
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Période</th>
+                            <th style="text-align:center;">Activités</th>
+                            <th style="text-align:right;">Budget</th>
+                            <th>Répartition</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @php $maxPeriod = $objectivesByPeriod->max('activities') ?: 1; @endphp
+                    @foreach($objectivesByPeriod as $row)
+                    <tr>
+                        <td class="fw-medium text-sm">{{ $row->period }}</td>
+                        <td style="text-align:center;"><span class="badge badge-primary">{{ $row->activities }}</span></td>
+                        <td class="text-sm" style="text-align:right;">{{ number_format($row->total_budget, 0, ',', ' ') }} FCFA</td>
+                        <td style="width:140px;">
+                            <div class="progress-bar-track">
+                                <div class="progress-bar-fill" style="width:{{ round($row->activities/$maxPeriod*100) }}%;background:var(--clr-primary);"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
+            @endif
+        </x-card>
+    </div>
+
+    <div class="col-lg-4">
+        <x-card title="Top objectifs" icon="bi-bullseye">
+            <div class="d-flex flex-column gap-3">
+                @forelse($topObjectives as $obj)
+                <div class="d-flex align-items-center gap-3">
+                    <div style="width:28px;height:28px;border-radius:50%;background:var(--clr-primary-light);color:var(--clr-primary);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0;">
+                        {{ $loop->iteration }}
+                    </div>
+                    <div class="flex-grow-1" style="min-width:0;">
+                        <div class="text-sm fw-medium" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                            {{ \Illuminate\Support\Str::limit($obj->label, 35) }}
+                        </div>
+                        <div class="text-xs text-muted">{{ $obj->activities_count }} activité{{ $obj->activities_count > 1 ? 's' : '' }}</div>
+                    </div>
+                    <span class="badge badge-secondary flex-shrink-0">{{ number_format(($obj->activities_sum_price ?? 0)/1000, 0) }}k</span>
+                </div>
+                @empty
+                <p class="text-muted text-sm">Aucun objectif.</p>
+                @endforelse
+            </div>
+        </x-card>
+    </div>
+</div>
+
+{{-- ===== ÉVOLUTION MENSUELLE (bar chart CSS) ===== --}}
+@if($monthlyActivities->isNotEmpty())
+<x-card title="Évolution mensuelle (12 derniers mois)" icon="bi-bar-chart-line" class="mb-6">
+    @php $maxMonth = $monthlyActivities->max('count') ?: 1; @endphp
+    <div class="d-flex align-items-end gap-2" style="height:120px;overflow-x:auto;padding-bottom:4px;">
+        @foreach($monthlyActivities as $m)
+        @php $h = round($m->count / $maxMonth * 100); @endphp
+        <div class="d-flex flex-column align-items-center gap-1 flex-shrink-0" style="min-width:40px;">
+            <span class="text-xs text-muted fw-semi">{{ $m->count }}</span>
+            <div style="width:28px;height:{{ max($h, 4) }}px;background:var(--clr-primary);border-radius:3px 3px 0 0;transition:height .3s ease;"
+                 title="{{ $m->month }} — {{ $m->count }} activités"></div>
+            <span class="text-xs text-muted" style="white-space:nowrap;">{{ \Illuminate\Support\Str::after($m->month, '-') }}/{{ \Illuminate\Support\Str::before($m->month, '-') }}</span>
+        </div>
+        @endforeach
+    </div>
+</x-card>
+@endif
+
+{{-- ===== ACTIVITÉS RÉCENTES ===== --}}
+<x-card title="Activités récentes" icon="bi-clock-history" class="mb-6">
+    @if($recentActivities->isEmpty())
+        <x-empty-state icon="bi-inbox" title="Aucune activité" message="Aucune activité enregistrée." />
+    @else
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Libellé</th>
+                    <th class="hide-mobile">Service</th>
+                    <th class="hide-mobile">Période</th>
+                    <th>Workflow</th>
+                    <th style="text-align:right;" class="hide-mobile">Budget</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach($recentActivities as $a)
+            @php
+                $wfCls = match($a->workflow_status) {
+                    'draft'     => 'badge-status--draft',
+                    'pending'   => 'badge-status--pending',
+                    'validated' => 'badge-status--active',
+                    'rejected'  => 'badge-status--rejected',
+                    default     => 'badge-secondary',
+                };
+            @endphp
+            <tr>
+                <td>
+                    <div class="text-sm fw-medium">{{ \Illuminate\Support\Str::limit($a->label, 50) }}</div>
+                    <div class="text-xs text-muted hide-mobile">{{ $a->created_at->diffForHumans() }}</div>
+                </td>
+                <td class="hide-mobile"><span class="badge badge-secondary">{{ $a->service->label ?? '—' }}</span></td>
+                <td class="text-sm hide-mobile text-muted">{{ $a->periode->label ?? '—' }}</td>
+                <td><span class="badge badge-status {{ $wfCls }}">{{ $a->workflowLabel }}</span></td>
+                <td class="text-sm hide-mobile" style="text-align:right;">{{ $a->price ? number_format($a->price, 0, ',', ' ') . ' FCFA' : '—' }}</td>
+                <td>
+                    <a href="{{ route('activites.show', $a->id) }}" class="btn btn-ghost btn-icon btn-sm">
+                        <i class="bi bi-eye"></i>
+                    </a>
+                </td>
+            </tr>
+            @endforeach
+            </tbody>
+        </table>
+    </div>
+    @endif
+</x-card>
+
+@endsection

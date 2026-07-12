@@ -20,13 +20,13 @@ return new class extends Migration
             $table->foreignId('under_objective_id')->constrained();
             $table->foreignId('periode_id')->constrained();
             $table->string('label');
-            $table->string('indicator');
-            $table->string('target');
-            $table->integer('price');
-            $table->string('source_of_funding');
-            $table->string('structure');
+            $table->string('indicator')->nullable();
+            $table->string('target')->nullable();
+            $table->integer('price')->nullable();
+            $table->string('source_of_funding')->nullable();
+            $table->string('structure')->nullable();
             $table->boolean('status')->default(0);
-            $table->longText('commentary');
+            $table->longText('commentary')->nullable();
             $table->timestamps();
         });
     }

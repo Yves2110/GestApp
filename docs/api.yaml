@@ -1,0 +1,467 @@
+openapi: 3.0.3
+info:
+  title: GestApp University API
+  description: >
+    API interne de GestApp University 3.0.
+    Toutes les routes nécessitent une session Laravel authentifiée (cookie `laravel_session`).
+    Les routes API JSON retournent `application/json`.
+  version: 3.0.0
+  contact:
+    name: GestApp Team
+
+servers:
+  - url: /
+    description: Serveur local
+
+tags:
+  - name: Activités
+    description: CRUD et liste des activités
+  - name: Workflow
+    description: Transitions du workflow de validation
+  - name: Calendrier
+    description: Données JSON pour la vue calendrier
+  - name: Timeline
+    description: Données JSON pour la vue Gantt timeline
+  - name: Export
+    description: Exports CSV et PDF
+  - name: Analytics
+    description: Statistiques et tableaux de bord
+  - name: Notifications
+    description: Gestion des notifications utilisateur
+  - name: Recherche
+    description: Recherche globale
+
+paths:
+
+  # ── Activités ──────────────────────────────────────────────────────────────
+
+  /activites:
+    get:
+      tags: [Activités]
+      summary: Liste paginée des activités
+      parameters:
+        - in: query
+          name: search
+          schema: { type: string }
+          description: Recherche sur le libellé
+        - in: query
+          name: service_id
+          schema: { type: integer }
+        - in: query
+          name: workflow_status
+          schema: { type: string, enum: [draft, pending, validated, rejected] }
+        - in: query
+          name: periode_id
+          schema: { type: integer }
+      responses:
+        200:
+          description: Vue HTML paginée
+        302:
+          description: Redirection vers login si non authentifié
+
+  /ActivitiesStore:
+    post:
+      tags: [Activités]
+      summary: Créer une activité
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ActivityInput'
+      responses:
+        302:
+          description: Redirection avec message de succès
+        422:
+          description: Erreurs de validation
+
+  /activites/{id}/edit:
+    get:
+      tags: [Activités]
+      summary: Formulaire d'édition d'une activité
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        200: { description: Vue HTML }
+        403: { description: Accès refusé (autre service) }
+        404: { description: Non trouvé }
+
+  /activites/{id}:
+    put:
+      tags: [Activités]
+      summary: Mettre à jour une activité
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ActivityInput'
+      responses:
+        302: { description: Redirection vers liste }
+        403: { description: Accès refusé }
+        422: { description: Erreurs de validation }
+    delete:
+      tags: [Activités]
+      summary: Supprimer une activité
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        302: { description: Redirection avec succès }
+        403: { description: Accès refusé }
+
+  /activites/{id}/show:
+    get:
+      tags: [Activités]
+      summary: Détail d'une activité
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        200: { description: Vue HTML détail }
+        403: { description: Accès refusé }
+
+  # ── Workflow ───────────────────────────────────────────────────────────────
+
+  /activites/{id}/workflow:
+    post:
+      tags: [Workflow]
+      summary: Effectuer une transition de workflow
+      description: |
+        Transitions autorisées :
+        - `draft → pending` : rôle Service (4), Admin (3), SuperAdmin (1)
+        - `pending → validated` : Admin (3), SuperAdmin (1)
+        - `pending → rejected` : Admin (3), SuperAdmin (1) — motif obligatoire
+        - `rejected → draft` : tous les rôles
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [to_status]
+              properties:
+                to_status:
+                  type: string
+                  enum: [draft, pending, validated, rejected]
+                rejection_reason:
+                  type: string
+                  description: Obligatoire si to_status = rejected
+      responses:
+        302:
+          description: Redirection après transition
+        403:
+          description: Rôle non autorisé pour cette transition
+        422:
+          description: |
+            - Transition non autorisée depuis le statut courant
+            - rejection_reason manquant pour rejet
+
+  # ── Calendrier ─────────────────────────────────────────────────────────────
+
+  /activites-calendar:
+    get:
+      tags: [Calendrier]
+      summary: Vue calendrier des activités
+      responses:
+        200: { description: Vue HTML FullCalendar }
+
+  /api/calendar/events:
+    get:
+      tags: [Calendrier]
+      summary: Événements JSON pour FullCalendar
+      parameters:
+        - in: query
+          name: start
+          schema: { type: string, format: date }
+          description: Début de la plage (ISO 8601)
+        - in: query
+          name: end
+          schema: { type: string, format: date }
+          description: Fin de la plage (ISO 8601)
+        - in: query
+          name: service_id
+          schema: { type: integer }
+        - in: query
+          name: workflow_status
+          schema: { type: string }
+      responses:
+        200:
+          description: Tableau d'événements FullCalendar
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CalendarEvent'
+
+  # ── Timeline ───────────────────────────────────────────────────────────────
+
+  /activites-timeline:
+    get:
+      tags: [Timeline]
+      summary: Vue Gantt timeline des activités
+      responses:
+        200: { description: Vue HTML Gantt CSS }
+
+  /api/timeline/data:
+    get:
+      tags: [Timeline]
+      summary: Données JSON pour le diagramme de Gantt
+      parameters:
+        - in: query
+          name: service_id
+          schema: { type: integer }
+        - in: query
+          name: workflow_status
+          schema: { type: string }
+        - in: query
+          name: periode_id
+          schema: { type: integer }
+      responses:
+        200:
+          description: Données Gantt groupées par service
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimelineData'
+
+  # ── Export ─────────────────────────────────────────────────────────────────
+
+  /export/config:
+    get:
+      tags: [Export]
+      summary: Page de configuration des exports
+
+  /export/process:
+    post:
+      tags: [Export]
+      summary: Télécharger un export CSV ou JSON
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [type, format]
+              properties:
+                type:
+                  type: string
+                  enum: [activities, global_stats, performance]
+                format:
+                  type: string
+                  enum: [csv, json]
+                service_id:
+                  type: integer
+                workflow_status:
+                  type: string
+                periode_id:
+                  type: integer
+      responses:
+        200:
+          description: Fichier téléchargeable (CSV ou JSON)
+
+  /export/pdf/activities:
+    get:
+      tags: [Export]
+      summary: Rapport activités en PDF (A4 paysage)
+      parameters:
+        - in: query
+          name: service_id
+          schema: { type: integer }
+        - in: query
+          name: workflow_status
+          schema: { type: string }
+        - in: query
+          name: periode_id
+          schema: { type: integer }
+      responses:
+        200:
+          description: Fichier PDF
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+
+  /export/pdf/performance:
+    get:
+      tags: [Export]
+      summary: Rapport de performance en PDF (A4 portrait)
+      responses:
+        200:
+          description: Fichier PDF
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+
+  # ── Analytics ──────────────────────────────────────────────────────────────
+
+  /analytics:
+    get:
+      tags: [Analytics]
+      summary: Dashboard analytique (KPIs, graphes)
+      responses:
+        200: { description: Vue HTML analytics }
+
+  /analytics/performance:
+    get:
+      tags: [Analytics]
+      summary: Rapport de performance (6 derniers mois)
+      responses:
+        200: { description: Vue HTML rapport performance }
+
+  # ── Notifications ──────────────────────────────────────────────────────────
+
+  /notifications:
+    get:
+      tags: [Notifications]
+      summary: Liste des notifications de l'utilisateur
+
+  /notifications/{id}/read:
+    post:
+      tags: [Notifications]
+      summary: Marquer une notification comme lue
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        200: { description: OK }
+
+  /notifications/read-all:
+    post:
+      tags: [Notifications]
+      summary: Marquer toutes les notifications comme lues
+      responses:
+        302: { description: Redirection }
+
+  # ── Recherche ──────────────────────────────────────────────────────────────
+
+  /api/search:
+    get:
+      tags: [Recherche]
+      summary: Recherche globale (activités, objectifs, services)
+      parameters:
+        - in: query
+          name: q
+          required: true
+          schema: { type: string, minLength: 2 }
+      responses:
+        200:
+          description: Résultats de recherche
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  activities:
+                    type: array
+                    items: { $ref: '#/components/schemas/ActivitySummary' }
+                  objectives:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: { type: integer }
+                        label: { type: string }
+                  services:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: { type: integer }
+                        label: { type: string }
+
+# ── Composants ─────────────────────────────────────────────────────────────
+
+components:
+  schemas:
+
+    ActivityInput:
+      type: object
+      required:
+        - service_id
+        - objective_id
+        - under_objective_id
+        - periode_id
+        - label
+      properties:
+        service_id:       { type: integer }
+        objective_id:     { type: integer }
+        under_objective_id: { type: integer }
+        periode_id:       { type: integer }
+        label:            { type: string, maxLength: 255 }
+        indicator:        { type: string, nullable: true }
+        target:           { type: string, nullable: true }
+        price:            { type: integer, nullable: true }
+        source_of_funding: { type: string, nullable: true }
+        structure:        { type: string, nullable: true }
+        commentary:       { type: string, nullable: true }
+
+    ActivitySummary:
+      type: object
+      properties:
+        id:               { type: integer }
+        label:            { type: string }
+        workflow_status:  { type: string }
+        service:          { type: string }
+        periode:          { type: string }
+
+    CalendarEvent:
+      type: object
+      properties:
+        id:               { type: integer }
+        title:            { type: string }
+        start:            { type: string, format: date }
+        backgroundColor:  { type: string }
+        borderColor:      { type: string }
+        extendedProps:
+          type: object
+          properties:
+            service:      { type: string }
+            workflow:     { type: string }
+            periode:      { type: string }
+            price:        { type: integer }
+
+    TimelineData:
+      type: object
+      properties:
+        groups:
+          type: array
+          items:
+            type: object
+            properties:
+              service:    { type: string }
+              items:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:           { type: integer }
+                    label:        { type: string }
+                    start:        { type: string, format: date }
+                    end:          { type: string, format: date }
+                    status:       { type: string }
+        min_date:         { type: string, format: date }
+        max_date:         { type: string, format: date }

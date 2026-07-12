@@ -7,15 +7,22 @@
         "watch": "vite build --watch"
     },
     "devDependencies": {
+        "@popperjs/core": "^2.11.8",
         "axios": "^1.7.2",
+        "bootstrap": "^5.3.3",
+        "bootstrap-icons": "^1.11.3",
+        "datatables.net-bs5": "^2.0.8",
+        "jquery": "^3.7.1",
         "laravel-vite-plugin": "^1.0.2",
         "lodash": "^4.17.21",
         "postcss": "^8.4.38",
-        "vite": "^5.3.1",
-        "bootstrap": "^5.3.3",
-        "bootstrap-icons": "^1.11.3",
-        "@popperjs/core": "^2.11.8",
-        "datatables.net-bs5": "^2.0.8",
-        "jquery": "^3.7.1"
+        "vite": "^5.3.1"
+    },
+    "dependencies": {
+        "@fullcalendar/core": "^6.1.21",
+        "@fullcalendar/daygrid": "^6.1.21",
+        "@fullcalendar/interaction": "^6.1.21",
+        "@fullcalendar/list": "^6.1.21",
+        "@fullcalendar/timegrid": "^6.1.21"
     }
 }

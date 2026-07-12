@@ -2,23 +2,24 @@
 
 @section('title', 'Monitoring Système - GestApp')
 
+@section('breadcrumb')
+    <li class="breadcrumb-item active">Monitoring</li>
+@endsection
+
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="page-header">
     <div>
-        <h2 class="h3 mb-1">
-            <i class="bi bi-activity text-university-primary me-2"></i>
-            Monitoring Système
-        </h2>
-        <p class="text-muted mb-0">Surveillance de l'état de santé et des performances</p>
+        <h1 class="page-title">Monitoring Système</h1>
+        <p class="page-subtitle">Surveillance de l'état de santé et des performances</p>
     </div>
-    <div class="d-flex gap-2">
-        <button class="btn btn-outline-success" onclick="refreshMonitoring()">
-            <i class="bi bi-arrow-clockwise me-1"></i>
-            Actualiser
+    <div class="page-actions">
+        <button class="btn btn-ghost btn-sm" onclick="refreshMonitoring()">
+            <i class="bi bi-arrow-clockwise"></i>
+            <span class="hide-mobile">Actualiser</span>
         </button>
-        <button class="btn btn-outline-primary" onclick="exportMonitoringReport()">
-            <i class="bi bi-download me-1"></i>
-            Exporter
+        <button class="btn btn-ghost btn-sm" onclick="exportMonitoringReport()">
+            <i class="bi bi-download"></i>
+            <span class="hide-mobile">Exporter</span>
         </button>
     </div>
 </div>
@@ -29,7 +30,7 @@
         <div class="card" id="healthOverview">
             <div class="card-header">
                 <h5 class="card-title mb-0">
-                    <i class="bi bi-heart-pulse text-university-primary me-2"></i>
+                    <i class="bi bi-heart-pulse me-2" style="color:var(--clr-primary);"></i>
                     État de Santé Global
                     <span id="overallStatus" class="badge ms-2">
                         <i class="bi bi-circle-fill me-1"></i>
@@ -58,7 +59,7 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title mb-0">
-                    <i class="bi bi-speedometer2 text-university-info me-2"></i>
+                    <i class="bi bi-speedometer2 text-info me-2"></i>
                     Métriques Système
                 </h5>
             </div>
@@ -81,7 +82,7 @@
         <div class="card mb-4">
             <div class="card-header">
                 <h6 class="card-title mb-0">
-                    <i class="bi bi-exclamation-triangle text-university-warning me-2"></i>
+                    <i class="bi bi-exclamation-triangle text-warning me-2"></i>
                     Alertes Actives
                     <span id="alertCount" class="badge bg-danger ms-2">0</span>
                 </h6>
@@ -98,7 +99,7 @@
         <div class="card">
             <div class="card-header">
                 <h6 class="card-title mb-0">
-                    <i class="bi bi-graph-up text-university-success me-2"></i>
+                    <i class="bi bi-graph-up text-success me-2"></i>
                     Statistiques Rapides
                 </h6>
             </div>
@@ -141,7 +142,7 @@
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">
-                        <i class="bi bi-file-text text-university-secondary me-2"></i>
+                        <i class="bi bi-file-text text-secondary me-2"></i>
                         Logs Récents
                     </h5>
                     <div class="btn-group btn-group-sm">
